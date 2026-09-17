@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Event Dynamics — Immersive Marketing Site
 
-## Getting Started
-
-First, run the development server:
+A scroll-driven, cinematic 3D website for **Event Dynamics**, built with Next.js 15, React Three Fiber, GSAP ScrollTrigger and Lenis.
+One persistent WebGL canvas holds a chrome, extruded version of the Event Dynamics “ed” monogram. That logo guides the visitor through every section, from the preloader to the footer.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm run build && npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` / `build` / `start` | Next.js |
+| `npm run lint` / `typecheck` | ESLint (Next + Prettier config) / strict TypeScript |
+| `npm run format` / `format:check` | Prettier (+ Tailwind class sorting) |
+| `npm run generate:placeholders` | Regenerates the stylised room + gallery artwork in `/public` |
+| `npm run generate:icons` | Regenerates `src/app/icon.svg` + `apple-icon.png` from the logo paths |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Requires Node 20+.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Folder structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├─ app/
+│  ├─ layout.tsx              fonts (Syne + Inter via next/font), SEO metadata, <AppShell>
+│  ├─ page.tsx                home: the section order *is* the film
+│  ├─ services/[slug]/        statically generated service pages
+│  ├─ contact/                standalone contact page
+│  ├─ api/contact/route.ts    server-side zod validation for enquiries
+│  ├─ opengraph-image.tsx     OG image rendered from the logo paths
+│  ├─ icon.svg, apple-icon.png
+│  └─ globals.css             Tailwind v4 @theme design tokens, glass surface, utilities
+├─ content/site.ts            ALL copy, stats, rooms, events, testimonials, links
+├─ components/
+│  ├─ providers/              AppShell, SmoothScroll (Lenis ⇄ GSAP), TransitionProvider (curtain), SoundProvider
+│  ├─ three/                  the single <Canvas>: Scene, GuideLogo, RoomsPortal, particles, beams, confetti, Effects
+│  │  └─ shaders/             GLSL for logo dissolve, contour lines, room portal/wipe, noise
+│  ├─ sections/               Hero, About, services/*, Experiences, Process, Testimonials, Finale, contact/*, Footer,
+│  │                          GuideTimeline (master timeline), GuidePose (sub-page poses)
+│  └─ ui/                     GlassCard, MagneticButton, Cursor, Navbar, MobileMenu, SectionHeading, TiltCard, Preloader…
+├─ hooks/                     useSplitReveal, useMediaQuery, useReducedMotion, useIsMobile
+└─ lib/
+   ├─ animation/              tokens.ts, gsap.ts, sceneState.ts, poses.ts, processCurve.ts, ready.ts
+   ├─ brand/logo.ts           the traced monogram paths (single source for DOM, 3D, icons, OG)
+   ├─ validation/contact.ts   zod schema shared by form + API
+   └─ utils/
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`PLAN.md` contains the section list, the full scroll-timeline map and the 3D scene graph.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## How the motion system works
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **One scene store.** `lib/animation/sceneState.ts` is a plain mutable object. GSAP tweens it and `useFrame` reads and damps it. No per-frame React state.
+- **One master timeline.** `components/sections/GuideTimeline.tsx` builds a paused GSAP timeline whose time axis is *scroll pixels*. Every guide pose from `lib/animation/poses.ts` is anchored to a section trigger (`"about.end"`, `"services@0.1"`, …), so the logo moves continuously and is rebuilt on every `ScrollTrigger.refresh()`.
+- **Section timelines** (pinned + scrubbed) own their DOM choreography and the Services portal values (`scene.portal`, `scene.room`).
+- **Framer Motion (`motion/react`)** is used only for micro-interactions: buttons, cursor, menu, curtain, form states.
+- **Lenis** drives smooth scrolling on the GSAP ticker (`lagSmoothing(0)`, `lenis.on('scroll', ScrollTrigger.update)`).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Tuning animation
+
+| What | Where |
+| --- | --- |
+| Easings, durations, staggers, scrub smoothing, damping, pin lengths, breakpoints | `src/lib/animation/tokens.ts` (CSS mirrors in `globals.css` `@theme`) |
+| Logo position/rotation/scale/tint per section | `src/lib/animation/poses.ts` (`nx`/`ny` are viewport-normalised −1…1) |
+| Where each pose is anchored in the scroll | `KEYFRAMES` in `components/sections/GuideTimeline.tsx` |
+| Services room timing (open, holds, wipes, close) | constants at the top of `components/sections/services/Services.tsx` |
+| Process path shape (shared by the SVG and the 3D curve) | `PROCESS_POINTS` in `lib/animation/processCurve.ts` |
+| Bloom, env intensity, chrome roughness, aberration | `scene.tuning` in `sceneState.ts`. In dev, open **`/?tune`** for a live Leva panel (Leva is excluded from production builds) |
+
+---
+
+## Swapping content & imagery
+
+- **Copy:** edit `src/content/site.ts`. Stats, client names, events and testimonials are **sample content**, so replace them before launch.
+- **Room images:** replace the files in `public/rooms/`, keeping the filenames (or update `services.rooms[].image`):
+  `room-01-corporate.webp`, `room-02-weddings.webp`, `room-03-concerts.webp`, `room-04-gala.webp`.
+  Use 16:9 WebP around 1920×1080 and under ~300 KB each. They feed both the WebGL portal and the finale bento.
+- **Gallery images:** `public/experiences/exp-0X-*.webp`, portrait 4:5 (960×1200).
+- The bundled artwork is procedurally generated by `scripts/generate-placeholders.mjs`. It's a stand-in for real event photography.
+- **Room accent colours:** `services.rooms[].tint` drives the logo glow, the post-processing grade, the rail and the tags.
+- **Logo:** the monogram paths live in `src/lib/brand/logo.ts`. After changing them, run `npm run generate:icons`.
+- **Client logos:** `components/sections/ClientMarquee.tsx` renders typographic marks. Swap in SVG logos there.
+
+## Contact form
+
+`/api/contact` validates with the same zod schema as the client. It does **not** send email yet. Add your provider (Resend, Postmark, a CRM or a webhook) at the `TODO(integration)` in `src/app/api/contact/route.ts`.
+
+---
+
+## Performance & accessibility
+
+- A single WebGL context for the whole site, persisted across routes. `dpr={[1, 2]}`, `PerformanceMonitor` switches to *lite* mode (fewer particles, Bloom only) and `AdaptiveDpr`.
+- Rendering pauses when the tab is hidden (`frameloop="never"`). Reduced-motion mode renders on demand.
+- Particles are single-draw-call `Points` shaders. Confetti uses `InstancedMesh`.
+- Room textures preload at startup and count toward the preloader's `useProgress`.
+- DOM images use `next/image` (AVIF/WebP). There are no GLB models; if you add any, compress them with Draco and use KTX2 textures (`useGLTF` + `useKTX2` from drei).
+- **Mobile (<768px):** shorter pins, a native swipe row for Experiences, a vertical Process timeline, lite 3D.
+- **`prefers-reduced-motion`:** no pinning or scrubbed 3D. The logo rests in a static pose and Services becomes stacked panels.
+- Semantic landmarks, a skip link, a keyboard-operable room rail and menu (Esc closes), visible focus rings, labelled form fields with announced errors.
+- Every GSAP animation is created inside `useGSAP` / `gsap.matchMedia`, so it reverts on unmount. `ScrollTrigger.sort()` + `refresh()` run after fonts, load and the preloader.
