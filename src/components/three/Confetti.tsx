@@ -3,9 +3,10 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
 
-const COLORS = ["#22E4FF", "#8B5CF6", "#FF2BD6", "#EBB92E", "#F4F3EF"];
+const COLORS = [PALETTE.brandYellow, PALETTE.yellowLight, PALETTE.yellowSoft, PALETTE.brandWhite, PALETTE.yellowDark];
 const LIFETIME = 4.5;
 
 /** Instanced confetti burst, fired by setting `scene.confettiAt` (contact form success). */

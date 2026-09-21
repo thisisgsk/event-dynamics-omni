@@ -22,6 +22,8 @@ export const DURATION = {
   micro: 0.3,
   ui: 0.6,
   scene: 1.2,
+  /** About stat counters: one play-through, not scrubbed */
+  counter: 1.9,
 } as const;
 
 export const STAGGER = {
@@ -29,6 +31,7 @@ export const STAGGER = {
   words: 0.06,
   lines: 0.1,
   items: 0.12,
+  counters: 0.08,
 } as const;
 
 /** Scrub smoothing (seconds) used by every scroll timeline */
@@ -64,4 +67,24 @@ export const SPRING = {
   cursor: { stiffness: 520, damping: 40, mass: 0.4 },
   ring: { stiffness: 160, damping: 20, mass: 0.6 },
   tilt: { stiffness: 220, damping: 22 },
+} as const;
+
+/**
+ * Brand palette, extracted from the Event Dynamics logo (yellow "e", white "d").
+ * Mirrors the CSS tokens in globals.css (@theme) — used by the 3D layer, shaders and canvas-drawn UI.
+ * Verify against the logo file with: node scripts/extract-brand-colors.mjs public/brand/logo.png
+ */
+export const PALETTE = {
+  brandYellow: "#EBB92E",
+  brandWhite: "#FFFFFF",
+  yellowLight: "#F5D268",
+  yellowSoft: "#FBE6A2",
+  yellowDark: "#C8961C",
+  yellowDeep: "#8A6614",
+  yellowMuted: "#4A3C18",
+  warmWhite: "#FFF6E0",
+  offWhite: "#F5F1E8",
+  error: "#FF5A52",
+  bg: "#07070A",
+  bg2: "#0E0E14",
 } as const;

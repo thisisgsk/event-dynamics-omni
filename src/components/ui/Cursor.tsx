@@ -63,12 +63,12 @@ export function Cursor() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-[100]" style={{ opacity: visible ? 1 : 0 }}>
       <motion.div
-        className="absolute top-0 left-0 flex items-center justify-center rounded-full border border-white/40 mix-blend-difference"
+        className="absolute top-0 left-0 flex items-center justify-center rounded-full border border-brand-yellow/70"
         style={{ x: ringX, y: ringY, translateX: "-50%", translateY: "-50%" }}
         animate={{
           width: ringSize,
           height: ringSize,
-          backgroundColor: label ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0)",
+          backgroundColor: label ? "rgba(235,185,46,0.96)" : "rgba(235,185,46,0)",
           scale: pressed ? 0.85 : 1,
         }}
         transition={{ duration: DURATION.micro, ease: BEZIER.out }}
@@ -77,7 +77,7 @@ export function Cursor() {
           {label && (
             <motion.span
               key={label}
-              className="text-[0.7rem] font-semibold tracking-[0.18em] text-black uppercase"
+              className="text-[0.7rem] font-semibold tracking-[0.18em] text-bg uppercase"
               initial={{ opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.6 }}
@@ -89,7 +89,7 @@ export function Cursor() {
         </AnimatePresence>
       </motion.div>
       <motion.div
-        className="absolute top-0 left-0 h-1.5 w-1.5 rounded-full bg-white mix-blend-difference"
+        className="absolute top-0 left-0 h-1.5 w-1.5 rounded-full bg-brand-yellow shadow-[0_0_8px_var(--color-brand-yellow)]"
         style={{ x: dotX, y: dotY, translateX: "-50%", translateY: "-50%" }}
         animate={{ opacity: label ? 0 : 1 }}
       />

@@ -9,12 +9,11 @@ export function RoomOverlay({ room, i }: { room: Room; i: number }) {
       data-room={i}
       aria-labelledby={`room-title-${i}`}
       className="room-overlay invisible absolute inset-x-0 bottom-0 pb-14 md:pb-20"
-      style={{ ["--room" as string]: room.tint }}
     >
       <div className="container-site">
         <div className="max-w-2xl">
-          <p className="room-reveal mb-5 flex items-center gap-3 eyebrow !text-fg/80">
-            <span aria-hidden className="h-px w-8" style={{ background: "var(--room)" }} />
+          <p className="room-reveal mb-5 flex items-center gap-3 eyebrow !text-brand-yellow">
+            <span aria-hidden className="h-px w-8 bg-brand-yellow" />
             Room {room.index}
           </p>
           <h3 id={`room-title-${i}`} className="room-reveal display-lg text-balance">
@@ -27,11 +26,7 @@ export function RoomOverlay({ room, i }: { room: Room; i: number }) {
                 key={tag}
                 className="rounded-full border border-white/15 bg-black/30 px-4 py-2 text-xs tracking-wide text-fg/90 backdrop-blur-md md:text-sm"
               >
-                <span
-                  aria-hidden
-                  className="mr-2 inline-block h-1.5 w-1.5 rounded-full align-middle"
-                  style={{ background: "var(--room)" }}
-                />
+                <span aria-hidden className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-yellow align-middle" />
                 {tag}
               </li>
             ))}

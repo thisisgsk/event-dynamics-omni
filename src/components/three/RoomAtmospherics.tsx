@@ -3,6 +3,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
 import { roomWeight } from "./rooms";
 
@@ -34,7 +35,15 @@ void main() {
 }
 `;
 
-const BEAM_COLORS = ["#FF2BD6", "#39FF88", "#FF2BD6", "#39FF88", "#FF2BD6", "#39FF88"];
+// Warm brand stage light: alternating brand yellow and warm white beams
+const BEAM_COLORS = [
+  PALETTE.brandYellow,
+  PALETTE.warmWhite,
+  PALETTE.brandYellow,
+  PALETTE.warmWhite,
+  PALETTE.brandYellow,
+  PALETTE.warmWhite,
+];
 
 export function LightBeams() {
   const group = useRef<THREE.Group>(null);
@@ -187,11 +196,11 @@ export function RoomAtmospherics({ lite }: { lite: boolean }) {
   const k = lite ? 0.4 : 1;
   return (
     <group>
-      <RoomMotes room={0} color="#22D3EE" count={Math.round(160 * k)} speed={0.35} size={3} />
-      <RoomMotes room={1} color="#FFC46B" count={Math.round(140 * k)} speed={0.15} size={9} />
+      <RoomMotes room={0} color={PALETTE.warmWhite} count={Math.round(160 * k)} speed={0.35} size={3} />
+      <RoomMotes room={1} color={PALETTE.yellowSoft} count={Math.round(140 * k)} speed={0.15} size={9} />
       <LightBeams />
-      <RoomMotes room={2} color="#FF5BE0" count={Math.round(120 * k)} speed={0.6} size={3} />
-      <RoomMotes room={3} color="#F6E2B0" count={Math.round(220 * k)} speed={-0.25} size={7} sparkle={1} />
+      <RoomMotes room={2} color={PALETTE.yellowLight} count={Math.round(120 * k)} speed={0.6} size={3} />
+      <RoomMotes room={3} color={PALETTE.yellowSoft} count={Math.round(220 * k)} speed={-0.25} size={7} sparkle={1} />
     </group>
   );
 }

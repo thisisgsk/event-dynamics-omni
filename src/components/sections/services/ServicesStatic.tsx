@@ -26,9 +26,7 @@ export function ServicesStatic() {
               />
               <div className="absolute inset-0 -z-10 scrim-bottom" />
               <div className="flex min-h-[26rem] flex-col justify-end p-8">
-                <p className="mb-3 eyebrow" style={{ color: room.tint }}>
-                  Room {room.index}
-                </p>
+                <p className="mb-3 eyebrow !text-brand-yellow">Room {room.index}</p>
                 <h3 className="font-display text-3xl font-bold">{room.title}</h3>
                 <p className="mt-3 text-fg/80">{room.description}</p>
                 <ul className="mt-5 flex flex-wrap gap-2">

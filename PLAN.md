@@ -51,8 +51,8 @@ Canvas (dpr [1,2], PerformanceMonitor → quality store)
 ├─ ParticleField        Points shader (1800 desktop / 600 mobile)
 ├─ RoomAtmospherics
 │  ├─ LightBeams        additive volumetric cones (room 3 — concerts)
-│  └─ RoomParticles ×3  cyan data motes / candle bokeh / champagne sparkles
-├─ Environment          custom Lightformers (neon cyan/violet/magenta + white) → chrome reflections
+│  └─ RoomParticles ×3  warm-white motes / candle bokeh / gold sparkles (brand palette)
+├─ Environment          custom Lightformers (brand yellow / warm white) → gold + white metal reflections
 ├─ CameraRig            damped dolly (guide.camZ) + pointer parallax
 ├─ Float
 │  └─ GuideLogo (group ← scene.guide, damped + mouse rotation)

@@ -24,9 +24,13 @@ type Props = {
 };
 
 const variants: Record<Variant, string> = {
-  primary: "bg-fg text-bg hover:text-bg",
-  ghost: "border border-line bg-white/[0.03] text-fg backdrop-blur-md hover:border-white/30",
-  glow: "bg-accent text-white shadow-[0_0_40px_-6px_rgba(139,92,246,0.8)]",
+  /** Solid brand yellow, dark text (contrast 11:1). */
+  primary: "bg-brand-yellow text-bg hover:shadow-(--glow-yellow-soft) active:bg-yellow-dark",
+  /** White-outlined glass; yellow border, text and glow on hover. */
+  ghost:
+    "border border-white/40 bg-white/[0.03] text-brand-white backdrop-blur-md hover:border-brand-yellow hover:text-brand-yellow hover:shadow-(--glow-yellow-soft)",
+  /** Hero CTA: brand yellow with a warm glow halo. */
+  glow: "bg-brand-yellow text-bg shadow-(--glow-yellow) hover:shadow-[0_0_56px_-4px_rgb(235_185_46/0.9)] active:bg-yellow-dark",
 };
 
 const sizes = {
@@ -78,22 +82,19 @@ export function MagneticButton({
 
   const inner = (
     <>
-      {variant === "primary" && (
+      {variant !== "ghost" && (
         <span
           aria-hidden
-          className="absolute inset-0 translate-y-full rounded-full transition-transform duration-(--duration-ui) ease-(--ease-out) bg-accent group-hover:translate-y-0"
+          className="absolute inset-0 translate-y-full rounded-full bg-yellow-light transition-transform duration-(--duration-ui) ease-(--ease-out) group-hover:translate-y-0 group-active:bg-yellow-dark"
         />
       )}
       {variant === "glow" && (
         <span
           aria-hidden
-          className="absolute -inset-3 -z-10 [animation:glow-pulse_3s_ease-in-out_infinite] rounded-full opacity-60 blur-2xl bg-accent"
+          className="absolute -inset-3 -z-10 [animation:glow-pulse_3s_ease-in-out_infinite] rounded-full bg-brand-yellow opacity-60 blur-2xl"
         />
       )}
-      <motion.span
-        style={{ x: sx, y: sy }}
-        className="relative z-10 inline-flex items-center gap-3 group-hover:text-white"
-      >
+      <motion.span style={{ x: sx, y: sy }} className="relative z-10 inline-flex items-center gap-3">
         {children}
       </motion.span>
     </>

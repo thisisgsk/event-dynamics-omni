@@ -63,7 +63,7 @@ export function Contact({ standalone = false }: { standalone?: boolean }) {
                   {d.href ? (
                     <a
                       href={d.href}
-                      className="underline-offset-4 transition-colors hover:text-cyan hover:underline"
+                      className="underline-offset-4 transition-colors hover:text-brand-yellow hover:underline"
                       data-cursor="Write"
                     >
                       {d.value}

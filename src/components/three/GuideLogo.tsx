@@ -3,9 +3,9 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { DAMP, PALETTE } from "@/lib/animation/tokens";
 import CustomShaderMaterial from "three-custom-shader-material";
 import { scene } from "@/lib/animation/sceneState";
-import { DAMP } from "@/lib/animation/tokens";
 import { getProcessCurve } from "@/lib/animation/processCurve";
 import { getLogoGeometries, LOGO_UNIT } from "./logoGeometry";
 import { lineFragment, lineVertex, logoFragment, logoVertex } from "./shaders/logo";
@@ -30,7 +30,7 @@ export function GuideLogo() {
       uDissolve: { value: 0 },
       uGlow: { value: 0.6 },
       uTime: { value: 0 },
-      uTint: { value: new THREE.Color("#8B5CF6") },
+      uTint: { value: new THREE.Color(PALETTE.brandYellow) },
     }),
     [],
   );
@@ -39,7 +39,7 @@ export function GuideLogo() {
       uDraw: { value: 0 },
       uConverge: { value: 0 },
       uOpacity: { value: 0 },
-      uColor: { value: new THREE.Color("#22E4FF") },
+      uColor: { value: new THREE.Color(PALETTE.yellowLight) },
     }),
     [],
   );
@@ -142,10 +142,12 @@ export function GuideLogo() {
         {/* Negative Y flips SVG space; three.js corrects face winding for negative-determinant matrices */}
         <group scale={[1, -1, 1]}>
           <mesh ref={meshE} geometry={geo.e}>
-            <CustomShaderMaterial {...shared} color="#F2C14E" iridescence={0.2} />
+            {/* Gold metal matched to the brand yellow "e" */}
+            <CustomShaderMaterial {...shared} color={PALETTE.brandYellow} />
           </mesh>
           <mesh ref={meshD} geometry={geo.d}>
-            <CustomShaderMaterial {...shared} color="#D9DCE6" iridescence={0.35} />
+            {/* Bright white metal for the "d", as in the logo */}
+            <CustomShaderMaterial {...shared} color={PALETTE.brandWhite} />
           </mesh>
           <lineSegments ref={lines} geometry={geo.lines} frustumCulled={false}>
             <primitive object={lineMaterial} attach="material" />

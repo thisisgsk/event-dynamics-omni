@@ -129,9 +129,9 @@ export function Process() {
       >
         <defs>
           <linearGradient id="process-gradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="var(--color-cyan)" />
-            <stop offset="0.5" stopColor="var(--color-violet)" />
-            <stop offset="1" stopColor="var(--color-magenta)" />
+            <stop offset="0" stopColor="var(--color-brand-yellow)" />
+            <stop offset="0.55" stopColor="var(--color-yellow-soft)" />
+            <stop offset="1" stopColor="var(--color-brand-white)" />
           </linearGradient>
         </defs>
         <path d={d} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="4 8" />
@@ -184,7 +184,7 @@ export function Process() {
                     aria-hidden
                     className={cn(
                       "h-2 w-2 rounded-full transition-colors duration-(--duration-ui)",
-                      active ? "bg-cyan shadow-[0_0_14px_var(--color-cyan)]" : "bg-white/20",
+                      active ? "bg-brand-yellow shadow-[0_0_14px_var(--color-brand-yellow)]" : "bg-white/20",
                     )}
                   />
                 </div>

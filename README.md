@@ -9,13 +9,13 @@ npm run dev        # http://localhost:3000
 npm run build && npm run start
 ```
 
-| Script | Purpose |
-| --- | --- |
-| `npm run dev` / `build` / `start` | Next.js |
-| `npm run lint` / `typecheck` | ESLint (Next + Prettier config) / strict TypeScript |
-| `npm run format` / `format:check` | Prettier (+ Tailwind class sorting) |
-| `npm run generate:placeholders` | Regenerates the stylised room + gallery artwork in `/public` |
-| `npm run generate:icons` | Regenerates `src/app/icon.svg` + `apple-icon.png` from the logo paths |
+| Script                            | Purpose                                                               |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `npm run dev` / `build` / `start` | Next.js                                                               |
+| `npm run lint` / `typecheck`      | ESLint (Next + Prettier config) / strict TypeScript                   |
+| `npm run format` / `format:check` | Prettier (+ Tailwind class sorting)                                   |
+| `npm run generate:placeholders`   | Regenerates the stylised room + gallery artwork in `/public`          |
+| `npm run generate:icons`          | Regenerates `src/app/icon.svg` + `apple-icon.png` from the logo paths |
 
 Requires Node 20+.
 
@@ -57,21 +57,41 @@ src/
 ## How the motion system works
 
 - **One scene store.** `lib/animation/sceneState.ts` is a plain mutable object. GSAP tweens it and `useFrame` reads and damps it. No per-frame React state.
-- **One master timeline.** `components/sections/GuideTimeline.tsx` builds a paused GSAP timeline whose time axis is *scroll pixels*. Every guide pose from `lib/animation/poses.ts` is anchored to a section trigger (`"about.end"`, `"services@0.1"`, …), so the logo moves continuously and is rebuilt on every `ScrollTrigger.refresh()`.
+- **One master timeline.** `components/sections/GuideTimeline.tsx` builds a paused GSAP timeline whose time axis is _scroll pixels_. Every guide pose from `lib/animation/poses.ts` is anchored to a section trigger (`"about.end"`, `"services@0.1"`, …), so the logo moves continuously and is rebuilt on every `ScrollTrigger.refresh()`.
 - **Section timelines** (pinned + scrubbed) own their DOM choreography and the Services portal values (`scene.portal`, `scene.room`).
 - **Framer Motion (`motion/react`)** is used only for micro-interactions: buttons, cursor, menu, curtain, form states.
 - **Lenis** drives smooth scrolling on the GSAP ticker (`lagSmoothing(0)`, `lenis.on('scroll', ScrollTrigger.update)`).
 
+### Brand palette
+
+Extracted from the logo (yellow "e", white "d"). CSS tokens live in `globals.css` `@theme`, and their TypeScript mirror `PALETTE` lives in `src/lib/animation/tokens.ts` and feeds the 3D scene, shaders, OG image and room tints.
+
+| Token          | Hex     | Use                                                  |
+| -------------- | ------- | ---------------------------------------------------- |
+| `brand-yellow` | #EBB92E | primary accent, buttons, eyebrows, rail, focus rings |
+| `brand-white`  | #FFFFFF | logo "d", secondary button outline                   |
+| `yellow-light` | #F5D268 | hover                                                |
+| `yellow-soft`  | #FBE6A2 | gradient mid-stop, highlights                        |
+| `yellow-dark`  | #C8961C | pressed                                              |
+| `yellow-deep`  | #8A6614 | borders on dark                                      |
+| `yellow-muted` | #4A3C18 | subtle fills / borders                               |
+| `warm-white`   | #FFF6E0 | 3D light, warm white tints                           |
+| `fg`           | #F5F1E8 | body text (warm off-white)                           |
+| `error`        | #FF5A52 | validation                                           |
+
+The accent gradient runs brand yellow → yellow-soft → brand white. Dark text on brand yellow is 11:1 and brand yellow on #07070A is 11:1, so both pass WCAG AA.
+To re-verify the brand hexes against the real logo file, save it as `public/brand/logo.png` and run `node scripts/extract-brand-colors.mjs`.
+
 ### Tuning animation
 
-| What | Where |
-| --- | --- |
-| Easings, durations, staggers, scrub smoothing, damping, pin lengths, breakpoints | `src/lib/animation/tokens.ts` (CSS mirrors in `globals.css` `@theme`) |
-| Logo position/rotation/scale/tint per section | `src/lib/animation/poses.ts` (`nx`/`ny` are viewport-normalised −1…1) |
-| Where each pose is anchored in the scroll | `KEYFRAMES` in `components/sections/GuideTimeline.tsx` |
-| Services room timing (open, holds, wipes, close) | constants at the top of `components/sections/services/Services.tsx` |
-| Process path shape (shared by the SVG and the 3D curve) | `PROCESS_POINTS` in `lib/animation/processCurve.ts` |
-| Bloom, env intensity, chrome roughness, aberration | `scene.tuning` in `sceneState.ts`. In dev, open **`/?tune`** for a live Leva panel (Leva is excluded from production builds) |
+| What                                                                             | Where                                                                                                                        |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| Easings, durations, staggers, scrub smoothing, damping, pin lengths, breakpoints | `src/lib/animation/tokens.ts` (CSS mirrors in `globals.css` `@theme`)                                                        |
+| Logo position/rotation/scale/tint per section                                    | `src/lib/animation/poses.ts` (`nx`/`ny` are viewport-normalised −1…1)                                                        |
+| Where each pose is anchored in the scroll                                        | `KEYFRAMES` in `components/sections/GuideTimeline.tsx`                                                                       |
+| Services room timing (open, holds, wipes, close)                                 | constants at the top of `components/sections/services/Services.tsx`                                                          |
+| Process path shape (shared by the SVG and the 3D curve)                          | `PROCESS_POINTS` in `lib/animation/processCurve.ts`                                                                          |
+| Bloom, env intensity, chrome roughness, aberration                               | `scene.tuning` in `sceneState.ts`. In dev, open **`/?tune`** for a live Leva panel (Leva is excluded from production builds) |
 
 ---
 
@@ -83,7 +103,7 @@ src/
   Use 16:9 WebP around 1920×1080 and under ~300 KB each. They feed both the WebGL portal and the finale bento.
 - **Gallery images:** `public/experiences/exp-0X-*.webp`, portrait 4:5 (960×1200).
 - The bundled artwork is procedurally generated by `scripts/generate-placeholders.mjs`. It's a stand-in for real event photography.
-- **Room accent colours:** `services.rooms[].tint` drives the logo glow, the post-processing grade, the rail and the tags.
+- **Room tints:** `services.rooms[].tint` sets each room's 3D logo glow and post-processing grade. Keep it to `PALETTE` yellow/white values. The DOM overlay (eyebrow, tags, rail) always uses brand yellow.
 - **Logo:** the monogram paths live in `src/lib/brand/logo.ts`. After changing them, run `npm run generate:icons`.
 - **Client logos:** `components/sections/ClientMarquee.tsx` renders typographic marks. Swap in SVG logos there.
 
@@ -95,7 +115,7 @@ src/
 
 ## Performance & accessibility
 
-- A single WebGL context for the whole site, persisted across routes. `dpr={[1, 2]}`, `PerformanceMonitor` switches to *lite* mode (fewer particles, Bloom only) and `AdaptiveDpr`.
+- A single WebGL context for the whole site, persisted across routes. `dpr={[1, 2]}`, `PerformanceMonitor` switches to _lite_ mode (fewer particles, Bloom only) and `AdaptiveDpr`.
 - Rendering pauses when the tab is hidden (`frameloop="never"`). Reduced-motion mode renders on demand.
 - Particles are single-draw-call `Points` shaders. Confetti uses `InstancedMesh`.
 - Room textures preload at startup and count toward the preloader's `useProgress`.

@@ -3,6 +3,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
 
 const vertex = /* glsl */ `
@@ -64,7 +65,7 @@ export function ParticleField({ count }: { count: number }) {
       uTime: { value: 0 },
       uSize: { value: 5 },
       uPixelRatio: { value: 1 },
-      uTint: { value: new THREE.Color("#8B5CF6") },
+      uTint: { value: new THREE.Color(PALETTE.brandYellow) },
       uOpacity: { value: 1 },
     }),
     [],

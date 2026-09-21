@@ -2,6 +2,7 @@
 
 import { Float } from "@react-three/drei";
 import { Suspense } from "react";
+import { PALETTE } from "@/lib/animation/tokens";
 import { Confetti } from "./Confetti";
 import { Effects } from "./Effects";
 import { GuideLogo } from "./GuideLogo";
@@ -17,7 +18,7 @@ type Props = { lite: boolean; reduced: boolean };
 export function Scene({ lite, reduced }: Props) {
   return (
     <>
-      <color attach="background" args={["#07070A"]} />
+      <color attach="background" args={[PALETTE.bg]} />
       <Backdrop />
       <Suspense fallback={null}>
         <RoomsPortal />

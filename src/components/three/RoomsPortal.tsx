@@ -4,6 +4,7 @@ import { useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
 import { backdropFragment, fullscreenVertex, roomFragment } from "./shaders/room";
 import { ROOM_TEXTURES, roomTint } from "./rooms";
@@ -18,9 +19,9 @@ const guideTint = new THREE.Color();
 export function Backdrop() {
   const uniforms = useMemo(
     () => ({
-      uTop: { value: new THREE.Color("#07070A") },
-      uBottom: { value: new THREE.Color("#0E0E14") },
-      uTint: { value: new THREE.Color("#8B5CF6") },
+      uTop: { value: new THREE.Color(PALETTE.bg) },
+      uBottom: { value: new THREE.Color(PALETTE.bg2) },
+      uTint: { value: new THREE.Color(PALETTE.brandYellow) },
       uMouse: { value: new THREE.Vector2() },
       uTime: { value: 0 },
       uRes: { value: new THREE.Vector2(1, 1) },

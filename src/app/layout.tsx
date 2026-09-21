@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Syne } from "next/font/google";
 import { AppShell } from "@/components/providers/AppShell";
 import { brand, seo } from "@/content/site";
+import { PALETTE } from "@/lib/animation/tokens";
 import "./globals.css";
 
 const syne = Syne({
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#07070A",
+  themeColor: PALETTE.bg,
   colorScheme: "dark",
 };
 

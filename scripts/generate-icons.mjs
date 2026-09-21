@@ -20,7 +20,7 @@ const icon = (
   <rect width="${size}" height="${size}" rx="${radius}" fill="#07070A"/>
   <g transform="translate(${size * 0.14} ${size * 0.2}) scale(${(size * 0.72) / 620})">
     <path fill-rule="evenodd" fill="#EBB92E" d="${E}"/>
-    <path fill="#F4F3EF" d="${D}"/>
+    <path fill="#FFFFFF" d="${D}"/>
   </g>
 </svg>`;
 

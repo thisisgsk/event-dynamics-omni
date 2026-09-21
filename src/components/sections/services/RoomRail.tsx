@@ -34,15 +34,14 @@ export function RoomRail({ active, onSelect }: Props) {
                 <span
                   className={cn(
                     "text-xs tabular-nums transition-colors duration-(--duration-micro)",
-                    isActive ? "text-fg" : "text-fg/45 group-hover:text-fg/80",
+                    isActive ? "text-brand-yellow" : "text-fg/55 group-hover:text-fg",
                   )}
                 >
                   {room.index}
                 </span>
                 <span className="relative block h-px w-14 overflow-hidden bg-white/20">
                   <motion.span
-                    className="absolute inset-0 origin-right"
-                    style={{ background: room.tint }}
+                    className="absolute inset-0 origin-right bg-brand-yellow shadow-[0_0_10px_var(--color-brand-yellow)]"
                     initial={false}
                     animate={{ scaleX: isActive ? 1 : 0 }}
                     transition={{ duration: DURATION.ui, ease: BEZIER.out }}

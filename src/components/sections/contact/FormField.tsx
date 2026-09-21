@@ -6,16 +6,16 @@ import { BEZIER, DURATION } from "@/lib/animation/tokens";
 import { cn } from "@/lib/utils/cn";
 
 const control =
-  "peer block w-full rounded-2xl border bg-white/[0.03] px-5 pt-6 pb-2.5 text-fg outline-none transition-[border-color,background-color,box-shadow] duration-(--duration-micro) ease-out placeholder:text-transparent focus:bg-white/[0.06] focus:shadow-[0_0_0_4px_rgba(34,228,255,0.12)]";
+  "peer block w-full rounded-2xl border bg-white/[0.03] px-5 pt-6 pb-2.5 text-fg outline-none transition-[border-color,background-color,box-shadow] duration-(--duration-micro) ease-out placeholder:text-transparent focus:bg-white/[0.06] focus:shadow-[0_0_0_4px_rgb(235_185_46/0.16)]";
 
 const labelBase =
   "pointer-events-none absolute left-5 origin-left text-muted transition-all duration-(--duration-micro) ease-out";
 
 /** Label floats when focused or filled. */
 const floating =
-  "top-4 text-base peer-focus:top-2 peer-focus:text-[0.7rem] peer-focus:tracking-wide peer-focus:text-cyan peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:tracking-wide";
+  "top-4 text-base peer-focus:top-2 peer-focus:text-[0.7rem] peer-focus:tracking-wide peer-focus:text-brand-yellow peer-[:not(:placeholder-shown)]:top-2 peer-[:not(:placeholder-shown)]:text-[0.7rem] peer-[:not(:placeholder-shown)]:tracking-wide";
 
-const pinned = "top-2 text-[0.7rem] tracking-wide peer-focus:text-cyan";
+const pinned = "top-2 text-[0.7rem] tracking-wide peer-focus:text-brand-yellow";
 
 type Common = { label: string; error?: string; name: string };
 
@@ -26,7 +26,7 @@ function ErrorText({ id, error }: { id: string; error?: string }) {
         <motion.p
           id={id}
           role="alert"
-          className="mt-2 pl-1 text-sm text-magenta"
+          className="mt-2 pl-1 text-sm text-error"
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
@@ -40,7 +40,7 @@ function ErrorText({ id, error }: { id: string; error?: string }) {
 }
 
 const border = (error?: string) =>
-  error ? "border-magenta/70" : "border-line hover:border-white/25 focus:border-cyan/70";
+  error ? "border-error/80" : "border-line hover:border-white/25 focus:border-brand-yellow/80";
 
 export const TextField = forwardRef<HTMLInputElement, Common & InputHTMLAttributes<HTMLInputElement>>(
   function TextField({ label, error, name, className, type = "text", ...rest }, ref) {

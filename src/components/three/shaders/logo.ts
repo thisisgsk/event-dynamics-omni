@@ -2,7 +2,7 @@ import { noiseGLSL } from "./noise";
 
 /**
  * Chrome logo material (CSM on MeshPhysicalMaterial).
- * uDissolve pours the chrome in from the top with a glowing noise edge; uTint + uGlow add neon rim light.
+ * uDissolve pours the chrome in from the top with a glowing noise edge; uTint + uGlow add a warm brand-yellow rim light.
  * Object space is SVG units: x ≈ -310…310, y ≈ -250…250 (y down before the mesh's negative Y scale).
  */
 export const logoVertex = /* glsl */ `

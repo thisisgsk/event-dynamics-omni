@@ -5,7 +5,6 @@ import { hero } from "@/content/site";
 import { gsap, SplitText, useGSAP } from "@/lib/animation/gsap";
 import { onReady } from "@/lib/animation/ready";
 import { EASE, MEDIA, PIN, SCRUB, STAGGER } from "@/lib/animation/tokens";
-import { applyGradientToChars } from "@/lib/utils/gradientChars";
 
 /** Split the headline into two halves that drift apart. */
 function splitHeadline(text: string) {
@@ -17,6 +16,8 @@ function splitHeadline(text: string) {
 export function Hero() {
   const section = useRef<HTMLElement>(null);
   const [lineA, lineB] = splitHeadline(hero.headline);
+  // Brand name in the sub-line is the yellow accent
+  const [subHead, subTail] = hero.subline.split(" — ");
 
   useGSAP(
     () => {
@@ -25,8 +26,6 @@ export function Hero() {
         .toArray<HTMLElement>(".hero-line")
         .map((el) => SplitText.create(el, { type: "words,chars", mask: "chars" }));
       const chars = splits.flatMap((s) => s.chars);
-      const gradientLine = section.current?.querySelector<HTMLElement>(".hero-line-gradient");
-      if (gradientLine) applyGradientToChars(splits[1].chars, gradientLine);
 
       // Intro reveal plays once the preloader lifts (part of the preloader sequence)
       gsap.set(chars, { yPercent: 115 });
@@ -117,19 +116,24 @@ export function Hero() {
       <div className="relative container-site flex h-full flex-col justify-between pt-28 pb-10 [perspective:900px] md:pt-32 md:pb-12">
         <h1 className="pointer-events-none relative mt-[6vh] display-xl uppercase [transform-style:preserve-3d]">
           <span data-depth="0.5" className="block">
-            <span className="hero-line block">{lineA}</span>
+            <span className="hero-line block text-brand-white">{lineA}</span>
           </span>
           <span data-depth="1" className="mt-[26vh] block text-right md:mt-[30vh]">
-            <span className="hero-line hero-line-gradient block">{lineB}</span>
+            <span className="hero-line block text-brand-yellow [text-shadow:0_0_40px_rgb(235_185_46/0.35)]">
+              {lineB}
+            </span>
           </span>
         </h1>
 
         <div className="hero-bottom flex items-end justify-between gap-6">
-          <p className="hero-sub max-w-sm text-base text-muted md:text-lg">{hero.subline}</p>
+          <p className="hero-sub max-w-sm text-base text-fg/85 md:text-lg">
+            <span className="font-medium text-brand-yellow">{subHead}</span>
+            {subTail && <> — {subTail}</>}
+          </p>
           <div className="hero-hint flex flex-col items-center gap-3" aria-hidden>
             <span className="eyebrow text-[0.65rem]">{hero.scrollHint}</span>
             <span className="relative block h-12 w-px overflow-hidden bg-line">
-              <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-hint_1.8s_var(--ease-in-out)_infinite] bg-accent" />
+              <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-hint_1.8s_var(--ease-in-out)_infinite] bg-brand-yellow" />
             </span>
           </div>
         </div>

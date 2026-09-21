@@ -3,6 +3,8 @@
  * Figures, client names, events and testimonials are sample content: replace them with real data.
  */
 
+import { PALETTE } from "@/lib/animation/tokens";
+
 export const brand = {
   name: "Event Dynamics",
   wordmark: "EVENT DYNAMICS",
@@ -64,6 +66,7 @@ export type Room = {
   description: string;
   tags: [string, string, string];
   image: string;
+  /** 3D glow / post-processing tint for this room — brand yellow/white palette only (see PALETTE). */
   tint: string;
   long: string[];
 };
@@ -81,7 +84,7 @@ export const services = {
       description: "Summits, launches and conferences staged with broadcast-grade production.",
       tags: ["Conferences", "Product Launches", "Leadership Summits"],
       image: "/rooms/room-01-corporate.webp",
-      tint: "#22D3EE",
+      tint: PALETTE.warmWhite,
       long: [
         "We translate business goals into moments people remember: keynote staging, LED architecture, hybrid broadcast and delegate journeys that run to the second.",
         "One production team owns run-of-show, speaker management, AV engineering and on-site hospitality, so your leadership can focus on the message.",
@@ -94,7 +97,7 @@ export const services = {
       description: "Intimate vows to grand destination weekends, told in candlelight and bloom.",
       tags: ["Destination Weddings", "Décor & Florals", "Guest Hospitality"],
       image: "/rooms/room-02-weddings.webp",
-      tint: "#F5B942",
+      tint: PALETTE.yellowSoft,
       long: [
         "Every celebration begins with your story. We design aisles, mandaps and receptions that feel personal, then orchestrate the logistics so your family can simply be present.",
         "Venue scouting, floral design, lighting, entertainment, travel and guest care are managed end to end.",
@@ -107,7 +110,7 @@ export const services = {
       description: "Stages, lasers and sound systems engineered for crowds that never forget.",
       tags: ["Stage Design", "Lighting & Lasers", "Artist Management"],
       image: "/rooms/room-03-concerts.webp",
-      tint: "#FF2BD6",
+      tint: PALETTE.brandYellow,
       long: [
         "From club nights to stadium tours, we build the show around the artist: stage architecture, lighting programming, audio design and crowd flow.",
         "Our crews handle rigging, permits, safety and artist hospitality so the performance is the only thing anyone talks about.",
@@ -120,7 +123,7 @@ export const services = {
       description: "Chandelier-lit evenings of fine dining, awards and effortless elegance.",
       tags: ["Awards Nights", "Fine Dining", "Luxury Décor"],
       image: "/rooms/room-04-gala.webp",
-      tint: "#F3D9A4",
+      tint: PALETTE.yellowLight,
       long: [
         "Black-tie evenings demand quiet perfection. We compose the room, the menu, the entertainment and the ceremony so every guest feels celebrated.",
         "Seating strategy, award show flow, culinary partners and décor are curated to a single, elegant brief.",

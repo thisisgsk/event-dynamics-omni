@@ -3,6 +3,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
 
 /** Faint low-poly geometry: a wireframe icosa shell and a faceted terrain drifting below. */
@@ -21,7 +22,7 @@ export function LowPolyShell() {
     }
     const terrainGeo = new THREE.WireframeGeometry(plane);
     const material = new THREE.LineBasicMaterial({
-      color: new THREE.Color("#8B5CF6"),
+      color: new THREE.Color(PALETTE.brandYellow),
       transparent: true,
       opacity: 0.07,
       depthWrite: false,

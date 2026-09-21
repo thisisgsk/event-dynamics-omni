@@ -57,7 +57,7 @@ export function ContactForm() {
           >
             <span
               aria-hidden
-              className="mb-8 flex h-14 w-14 items-center justify-center rounded-full text-2xl text-white bg-accent"
+              className="mb-8 flex h-14 w-14 items-center justify-center rounded-full bg-brand-yellow text-2xl text-bg shadow-(--glow-yellow)"
             >
               ✓
             </span>

@@ -69,8 +69,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                 >
                   <span
                     aria-hidden
-                    className="mr-2 inline-block h-1.5 w-1.5 rounded-full align-middle"
-                    style={{ background: room.tint }}
+                    className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-yellow align-middle"
                   />
                   {t}
                 </li>
@@ -106,7 +105,9 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
             >
               <span>
                 <span className="eyebrow">Next room · {next.index}</span>
-                <span className="mt-3 block display-lg transition-colors group-hover:text-gold">{next.title}</span>
+                <span className="mt-3 block display-lg transition-colors group-hover:text-brand-yellow">
+                  {next.title}
+                </span>
               </span>
               <span
                 aria-hidden

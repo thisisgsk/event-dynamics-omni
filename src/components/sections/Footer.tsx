@@ -62,7 +62,7 @@ export function Footer() {
             <ul className="space-y-2">
               {footer.quickLinks.map((l) => (
                 <li key={l.href}>
-                  <TransitionLink href={l.href} className="text-fg/80 transition-colors hover:text-fg">
+                  <TransitionLink href={l.href} className="text-fg/80 transition-colors hover:text-brand-yellow">
                     {l.label}
                   </TransitionLink>
                 </li>
@@ -79,7 +79,7 @@ export function Footer() {
                     href={s.href}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="text-fg/80 transition-colors hover:text-fg"
+                    className="text-fg/80 transition-colors hover:text-brand-yellow"
                     data-cursor="Visit"
                   >
                     {s.label}
@@ -105,7 +105,7 @@ export function Footer() {
         <p
           ref={wordmark}
           aria-hidden
-          className="mt-20 text-center font-display text-[min(6.5vw,6.1rem)] leading-[0.9] font-extrabold tracking-[-0.03em] whitespace-nowrap select-none md:mt-28"
+          className="mt-20 text-center font-display text-[min(5.9vw,5.4rem)] leading-[0.9] font-extrabold tracking-[-0.03em] whitespace-nowrap select-none md:mt-28"
         >
           {brand.wordmark}
         </p>

@@ -126,9 +126,7 @@ export function Finale() {
                 />
                 <div aria-hidden className="absolute inset-0 -z-10 scrim-bottom" />
                 <div className="flex h-full flex-col justify-end p-4 md:p-5">
-                  <p className="eyebrow !text-[0.6rem]" style={{ color: room.tint }}>
-                    Room {room.index}
-                  </p>
+                  <p className="eyebrow !text-[0.6rem] !text-brand-yellow">Room {room.index}</p>
                   <h3 className="mt-1 font-display text-base leading-tight font-bold md:text-xl">{room.title}</h3>
                 </div>
               </article>

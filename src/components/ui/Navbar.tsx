@@ -7,11 +7,14 @@ import { useEffect, useState } from "react";
 import { nav, ui } from "@/content/site";
 import { BEZIER, DURATION } from "@/lib/animation/tokens";
 import { cn } from "@/lib/utils/cn";
+import { useActiveSection } from "@/hooks/useActiveSection";
 import { BrandLockup } from "./BrandLogo";
 import { MagneticButton } from "./MagneticButton";
 import { MobileMenu } from "./MobileMenu";
 import { SoundToggle } from "./SoundToggle";
 import { TransitionLink } from "./TransitionLink";
+
+const SECTION_IDS = nav.links.map((l) => l.href.replace("#", ""));
 
 /** The single site navbar: transparent at top, glass after 80px, hides on scroll down, returns on scroll up. */
 export function Navbar() {
@@ -19,6 +22,7 @@ export function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const active = useActiveSection(SECTION_IDS, pathname === "/");
 
   // Route change resets scroll without a Lenis scroll event — resync the bar
   useEffect(() => {
@@ -46,7 +50,7 @@ export function Navbar() {
           className={cn(
             "container-site mt-3 flex h-16 items-center justify-between rounded-full transition-[background-color,box-shadow,backdrop-filter] duration-(--duration-ui) ease-out md:mt-4 md:h-[4.5rem]",
             scrolled && !menuOpen
-              ? "bg-bg/55 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)] backdrop-blur-xl"
+              ? "bg-bg/55 shadow-[inset_0_0_0_1px_rgb(235_185_46/0.14)] backdrop-blur-xl"
               : "bg-transparent",
           )}
           style={{ maxWidth: "min(1440px, calc(100% - 1.5rem))" }}
@@ -61,20 +65,30 @@ export function Navbar() {
           </TransitionLink>
 
           <ul className="hidden items-center gap-1 lg:flex">
-            {nav.links.map((link) => (
-              <li key={link.href}>
-                <TransitionLink
-                  href={link.href}
-                  className="group relative rounded-full px-4 py-2 text-sm text-fg/75 transition-colors duration-(--duration-micro) hover:text-fg"
-                >
-                  {link.label}
-                  <span
-                    aria-hidden
-                    className="absolute inset-x-4 bottom-1 h-px origin-left scale-x-0 transition-transform duration-(--duration-ui) ease-out bg-accent group-hover:scale-x-100"
-                  />
-                </TransitionLink>
-              </li>
-            ))}
+            {nav.links.map((link) => {
+              const isActive = active === link.href.slice(1);
+              return (
+                <li key={link.href}>
+                  <TransitionLink
+                    href={link.href}
+                    aria-current={isActive ? "location" : undefined}
+                    className={cn(
+                      "group relative rounded-full px-4 py-2 text-sm transition-colors duration-(--duration-micro)",
+                      isActive ? "text-brand-yellow" : "text-fg/75 hover:text-brand-white",
+                    )}
+                  >
+                    {link.label}
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute inset-x-4 bottom-1 h-px origin-left bg-brand-yellow transition-transform duration-(--duration-ui) ease-out group-hover:scale-x-100",
+                        isActive ? "scale-x-100 shadow-[0_0_8px_var(--color-brand-yellow)]" : "scale-x-0",
+                      )}
+                    />
+                  </TransitionLink>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="flex items-center gap-2 md:gap-3">

@@ -5,6 +5,7 @@ import { Bloom, ChromaticAberration, EffectComposer, Noise, Vignette } from "@re
 import { BlendFunction, Effect, type BloomEffect, type ChromaticAberrationEffect } from "postprocessing";
 import { forwardRef, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
 import { roomTint } from "./rooms";
 
@@ -25,7 +26,7 @@ class TintGradeEffect extends Effect {
     super("TintGrade", tintFragment, {
       blendFunction: BlendFunction.NORMAL,
       uniforms: new Map<string, THREE.Uniform>([
-        ["uTint", new THREE.Uniform(new THREE.Color("#8B5CF6"))],
+        ["uTint", new THREE.Uniform(new THREE.Color(PALETTE.brandYellow))],
         ["uAmount", new THREE.Uniform(0.3)],
       ]),
     });
