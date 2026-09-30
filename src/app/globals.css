@@ -1,27 +1,24 @@
 @import "tailwindcss";
 @import "lenis/dist/lenis.css";
 
+/*
+ * Theming: next-themes puts `dark` on <html>. Any element can also opt into the dark tokens with
+ * class="dark" — photo surfaces (room overlays, gallery cards, bento tiles) do this so their white
+ * text stays readable on the imagery in both modes.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ───────────────────────── Design tokens ───────────────────────── */
 @theme {
-  /* Base */
-  --color-bg: #07070a;
-  --color-bg-2: #0e0e14;
-  --color-surface: #13131b;
-  --color-line: rgb(255 255 255 / 0.1);
-  --color-fg: #f5f1e8; /* warm off-white body text */
-  --color-muted: #aba59a;
-  --color-dim: #7d776c;
-
-  /* Brand — extracted from the Event Dynamics logo (mirrors PALETTE in lib/animation/tokens.ts) */
-  --color-brand-yellow: #ebb92e; /* primary accent */
+  /* Brand — extracted from the Event Dynamics logo, identical in both themes (mirrors PALETTE in lib/animation/tokens.ts) */
+  --color-brand-yellow: #ebb92e; /* primary accent: fills, buttons, progress, active states */
   --color-brand-white: #ffffff;
-  --color-yellow-light: #f5d268; /* hover */
-  --color-yellow-soft: #fbe6a2; /* gradient mid, highlights */
-  --color-yellow-dark: #c8961c; /* pressed */
-  --color-yellow-deep: #8a6614; /* borders on dark */
-  --color-yellow-muted: #4a3c18; /* subtle borders / fills */
+  --color-yellow-light: #f5d268;
+  --color-yellow-soft: #fbe6a2;
+  --color-yellow-dark: #c8961c;
+  --color-yellow-deep: #8a6614;
+  --color-yellow-muted: #4a3c18;
   --color-warm-white: #fff6e0;
-  --color-error: #ff5a52; /* validation — stays a clear red */
 
   --font-display: var(--font-syne), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -36,48 +33,250 @@
   --container-site: 1440px;
 }
 
+/* Semantic colours → Tailwind utilities (bg-bg, text-fg, border-line, text-accent-ink …). Values switch per theme below. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-alt);
+  --color-surface: var(--bg-elevated);
+  --color-line: var(--border);
+  --color-fg: var(--text-primary);
+  --color-body: var(--text-secondary);
+  --color-muted: var(--text-muted);
+  --color-dim: var(--text-dim);
+  /* The colour "opposite" the page: white on dark, black on light. For hairlines and tints (bg-ink/[0.03]). */
+  --color-ink: var(--ink);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-pressed: var(--accent-pressed);
+  /* Accent that is safe as text or a thin stroke on the page background */
+  --color-accent-ink: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-error: var(--error);
+  --color-graphic-line: var(--graphic-line);
+  --color-graphic-mid: var(--graphic-mid);
+  --color-graphic-strong: var(--graphic-strong);
+}
+
+/* Light theme (default, also used before JS runs) */
 :root {
-  --gradient-accent: linear-gradient(
-    90deg,
-    var(--color-brand-yellow),
-    var(--color-yellow-soft) 55%,
-    var(--color-brand-white)
-  );
-  --gradient-accent-diag: linear-gradient(
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --bg-alt: #f7f7f5;
+  --bg-elevated: #f2f2ef;
+  --border: rgb(0 0 0 / 0.1);
+  --ink: #000000;
+
+  --text-primary: #111111;
+  --text-secondary: #3f3f3f;
+  --text-muted: #6b6b6b; /* 4.75:1 on #F2F2EF, 5.3:1 on white */
+  --text-dim: #6b6b6b;
+
+  --accent: #ebb92e;
+  --accent-hover: #dda71d; /* hover darkens the yellow slightly */
+  --accent-pressed: #c8961c;
+  --accent-text: #856210; /* deep gold, same hue as the brand yellow — 5:1+ on every light background */
+  --on-accent: #111111;
+  --error: #c8211b;
+  --focus: var(--accent-text);
+
+  --gradient-accent: linear-gradient(90deg, #c8961c, #ebb92e 55%, #f5d268);
+  --gradient-accent-diag: linear-gradient(135deg, #c8961c, #ebb92e 55%, #f5d268);
+  --gradient-accent-text: linear-gradient(90deg, #7d5c0f, #856210 55%, #8a6614);
+  /* 1–2px accent strokes: yellow is too faint on white, so they use the deep gold */
+  --gradient-accent-line: linear-gradient(90deg, var(--accent-text), var(--accent-text));
+  --gradient-wordmark: linear-gradient(90deg, #111111 0%, #2b2b2b 40%, #6b6b6b 82%, #856210 100%);
+
+  --glow: 0 12px 28px -12px rgb(235 185 46 / 0.6), 0 2px 6px -2px rgb(0 0 0 / 0.1);
+  --glow-soft: 0 8px 20px -10px rgb(235 185 46 / 0.55), 0 1px 3px rgb(0 0 0 / 0.08);
+  --glow-strong: 0 16px 36px -14px rgb(235 185 46 / 0.7), 0 3px 8px -2px rgb(0 0 0 / 0.12);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -12px rgb(0 0 0 / 0.1), 0 30px 60px -30px rgb(0 0 0 / 0.12);
+
+  --surface-glass:
+    radial-gradient(120% 80% at 0% 0%, rgb(235 185 46 / 0.07), transparent 60%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.78), rgb(255 255 255 / 0.66));
+  --surface-glass-solid: rgb(255 255 255 / 0.84);
+  --glass-edge: linear-gradient(
     135deg,
-    var(--color-brand-yellow),
-    var(--color-yellow-soft) 55%,
-    var(--color-brand-white)
+    rgb(235 185 46 / 0.7),
+    rgb(0 0 0 / 0.08) 35%,
+    rgb(0 0 0 / 0.06) 60%,
+    rgb(0 0 0 / 0.14)
   );
-  --glow-yellow: 0 0 40px -6px rgb(235 185 46 / 0.75);
-  --glow-yellow-soft: 0 0 28px -8px rgb(235 185 46 / 0.55);
+  --glass-inner: inset 0 1px 0 rgb(255 255 255 / 0.9);
+  --nav-glass: rgb(255 255 255 / 0.72);
+  --nav-edge: inset 0 0 0 1px rgb(0 0 0 / 0.06), inset 0 -1px 0 rgb(0 0 0 / 0.08), 0 10px 30px -18px rgb(0 0 0 / 0.18);
+
+  --input-bg: #ffffff;
+  --input-bg-focus: #ffffff;
+  --input-border: #8f8f8f; /* 3.2:1 — WCAG 1.4.11 control boundary */
+  --input-border-hover: #6b6b6b;
+  --input-border-focus: var(--accent-text);
+  --input-ring: 0 0 0 4px rgb(235 185 46 / 0.4);
+
+  /* Secondary button: black outline, fills black on hover */
+  --btn-ghost-border: #111111;
+  --btn-ghost-bg: transparent;
+  --btn-ghost-text: #111111;
+  --btn-ghost-hover-border: #111111;
+  --btn-ghost-hover-bg: #111111;
+  --btn-ghost-hover-text: #ffffff;
+  --btn-ghost-hover-shadow: 0 10px 24px -12px rgb(0 0 0 / 0.35);
+
+  /* Decorative graphics: grey → black */
+  --graphic-line: #d4d4d4;
+  --graphic-mid: #737373;
+  --graphic-strong: #171717;
+  --graphic-particle: #171717;
+  /* Process path: the drawn stroke (the dashed track uses --graphic-line) */
+  --process-stop-a: #171717;
+  --process-stop-b: #3f3f3f;
+  --process-stop-c: #737373;
+
+  /* Logo: the white "d" becomes near-black on white; the yellow "e" is unchanged */
+  --logo-e: #ebb92e;
+  --logo-d: #111111;
+
+  /* Page-coloured veil (preloader, menus) as an rgb triplet */
+  --veil: 255 255 255;
+  /* Photo scrim: stays dark in BOTH themes so white text on imagery keeps its contrast */
+  --scrim: 7 7 10;
+
+  --grain-opacity: 0.022;
+  --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --peel-dim: 0.12;
+
+  /* 3D scene — read by useThemeColors() */
+  --scene-bg-top: var(--bg);
+  --scene-bg-bottom: var(--bg-alt);
+  --scene-logo-e: #e6b22b; /* gold metal (a hair deeper than the brand yellow so its edges hold on white) */
+  --scene-logo-d: #262626; /* polished graphite */
+  --scene-line: var(--graphic-line);
+  --scene-particle: var(--graphic-particle);
+  --scene-strong: var(--graphic-strong);
+
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+/* Dark theme — the original look, value for value */
+.dark {
   color-scheme: dark;
+
+  --bg: #07070a;
+  --bg-alt: #0e0e14;
+  --bg-elevated: #13131b;
+  --border: rgb(255 255 255 / 0.1);
+  --ink: #ffffff;
+
+  --text-primary: #f5f1e8;
+  --text-secondary: color-mix(in oklab, #f5f1e8 85%, transparent);
+  --text-muted: #aba59a;
+  --text-dim: #7d776c;
+
+  --accent: #ebb92e;
+  --accent-hover: #f5d268;
+  --accent-pressed: #c8961c;
+  --accent-text: #ebb92e;
+  --on-accent: #07070a;
+  --error: #ff5a52;
+  --focus: #ebb92e;
+
+  --gradient-accent: linear-gradient(90deg, #ebb92e, #fbe6a2 55%, #ffffff);
+  --gradient-accent-diag: linear-gradient(135deg, #ebb92e, #fbe6a2 55%, #ffffff);
+  --gradient-accent-text: var(--gradient-accent);
+  --gradient-accent-line: var(--gradient-accent);
+  --gradient-wordmark: var(--gradient-accent);
+
+  --glow: 0 0 40px -6px rgb(235 185 46 / 0.75);
+  --glow-soft: 0 0 28px -8px rgb(235 185 46 / 0.55);
+  --glow-strong: 0 0 56px -4px rgb(235 185 46 / 0.9);
+  --shadow: 0 30px 80px -30px rgb(0 0 0 / 0.7);
+
+  --surface-glass:
+    radial-gradient(120% 80% at 0% 0%, rgb(235 185 46 / 0.09), transparent 60%),
+    linear-gradient(180deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+  --surface-glass-solid: rgb(10 10 15 / 0.72);
+  --glass-edge: linear-gradient(
+    135deg,
+    rgb(235 185 46 / 0.55),
+    rgb(255 255 255 / 0.08) 35%,
+    rgb(255 255 255 / 0.04) 60%,
+    rgb(255 255 255 / 0.35)
+  );
+  --glass-inner: inset 0 1px 0 rgb(255 255 255 / 0.08), inset 0 0 48px rgb(235 185 46 / 0.05);
+  --nav-glass: rgb(7 7 10 / 0.55);
+  --nav-edge: inset 0 0 0 1px rgb(235 185 46 / 0.14);
+
+  --input-bg: rgb(255 255 255 / 0.03);
+  --input-bg-focus: rgb(255 255 255 / 0.06);
+  --input-border: var(--border);
+  --input-border-hover: rgb(255 255 255 / 0.25);
+  --input-border-focus: rgb(235 185 46 / 0.8);
+  --input-ring: 0 0 0 4px rgb(235 185 46 / 0.16);
+
+  --btn-ghost-border: rgb(255 255 255 / 0.4);
+  --btn-ghost-bg: rgb(255 255 255 / 0.03);
+  --btn-ghost-text: #ffffff;
+  --btn-ghost-hover-border: #ebb92e;
+  --btn-ghost-hover-bg: rgb(255 255 255 / 0.03);
+  --btn-ghost-hover-text: #ebb92e;
+  --btn-ghost-hover-shadow: var(--glow-soft);
+
+  --graphic-line: rgb(255 255 255 / 0.12);
+  --graphic-mid: rgb(255 255 255 / 0.4);
+  --graphic-strong: #ffffff;
+  --graphic-particle: #ffffff;
+  --process-stop-a: #ebb92e;
+  --process-stop-b: #fbe6a2;
+  --process-stop-c: #ffffff;
+
+  --logo-e: #ebb92e;
+  --logo-d: #ffffff;
+
+  --veil: 7 7 10;
+  --scrim: 7 7 10;
+
+  --grain-opacity: 0.07;
+  --grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --peel-dim: 0.55;
+
+  /* 3D scene tokens must be hex (parsed by useThemeColors). In dark the graphics follow the guide tint instead. */
+  --scene-logo-e: #ebb92e;
+  --scene-logo-d: #ffffff;
+  --scene-line: #ffffff;
+  --scene-particle: #ffffff;
+  --scene-strong: #ffffff;
+}
+
+/* Photo cards lift off the white page with a soft neutral shadow (they carry .dark, so key off <html>) */
+:root:not(.dark) .photo-lift {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.06),
+    0 18px 40px -22px rgb(0 0 0 / 0.35);
 }
 
 /* ───────────────────────── Base ───────────────────────── */
 html {
-  background: var(--color-bg);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 
 body {
-  background: linear-gradient(180deg, var(--color-bg), var(--color-bg-2));
-  color: var(--color-fg);
+  background: linear-gradient(180deg, var(--bg), var(--bg-alt));
+  color: var(--text-primary);
   font-family: var(--font-sans);
   min-height: 100svh;
   overflow-x: clip;
 }
 
 ::selection {
-  background: var(--color-brand-yellow);
-  color: var(--color-bg);
+  background: var(--accent);
+  color: var(--on-accent);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brand-yellow);
+  outline: 2px solid var(--focus);
   outline-offset: 4px;
   border-radius: 6px;
 }
@@ -116,7 +315,7 @@ html.is-loading #content {
 }
 
 @utility text-gradient {
-  background: var(--gradient-accent);
+  background: var(--gradient-accent-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -130,12 +329,17 @@ html.is-loading #content {
   background: var(--gradient-accent-diag);
 }
 
+/* Accent for 1–2px strokes (yellow gradient on dark, deep gold on light) */
+@utility bg-accent-line {
+  background: var(--gradient-accent-line);
+}
+
 @utility eyebrow {
   font-family: var(--font-sans);
   font-size: 0.75rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-muted);
+  color: var(--text-muted);
 }
 
 @utility display-xl {
@@ -155,11 +359,20 @@ html.is-loading #content {
 }
 
 @utility scrim-left {
-  background: linear-gradient(90deg, rgb(7 7 10 / 0.88) 0%, rgb(7 7 10 / 0.55) 40%, transparent 72%);
+  background: linear-gradient(90deg, rgb(var(--scrim) / 0.88) 0%, rgb(var(--scrim) / 0.55) 40%, transparent 72%);
 }
 
 @utility scrim-bottom {
-  background: linear-gradient(0deg, rgb(7 7 10 / 0.92) 0%, rgb(7 7 10 / 0.4) 45%, transparent 75%);
+  background: linear-gradient(0deg, rgb(var(--scrim) / 0.92) 0%, rgb(var(--scrim) / 0.4) 45%, transparent 75%);
+}
+
+/* Same fades in the page colour (--veil): dark exactly like the scrims above, white on the light theme */
+@utility veil-left {
+  background: linear-gradient(90deg, rgb(var(--veil) / 0.88) 0%, rgb(var(--veil) / 0.55) 40%, transparent 72%);
+}
+
+@utility veil-bottom {
+  background: linear-gradient(0deg, rgb(var(--veil) / 0.92) 0%, rgb(var(--veil) / 0.4) 45%, transparent 75%);
 }
 
 /* Glass surface — used only through <GlassCard> */
@@ -167,21 +380,16 @@ html.is-loading #content {
   position: relative;
   isolation: isolate;
   border-radius: var(--radius-card);
-  background:
-    radial-gradient(120% 80% at 0% 0%, rgb(235 185 46 / 0.09), transparent 60%),
-    linear-gradient(180deg, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.02));
+  background: var(--surface-glass);
   backdrop-filter: blur(22px) saturate(140%);
   -webkit-backdrop-filter: blur(22px) saturate(140%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.08),
-    inset 0 0 48px rgb(235 185 46 / 0.05),
-    0 30px 80px -30px rgb(0 0 0 / 0.7);
+  box-shadow: var(--glass-inner), var(--shadow);
 }
 
 @media (max-width: 767px) {
   /* Text sits over the 3D logo on small screens: denser glass keeps AA contrast */
   .glass-card {
-    background-color: rgb(10 10 15 / 0.72);
+    background-color: var(--surface-glass-solid);
   }
 }
 
@@ -192,19 +400,25 @@ html.is-loading #content {
   z-index: -1;
   padding: 1px;
   border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgb(235 185 46 / 0.55),
-    rgb(255 255 255 / 0.08) 35%,
-    rgb(255 255 255 / 0.04) 60%,
-    rgb(255 255 255 / 0.35)
-  );
+  background: var(--glass-edge);
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/* Hero accent line, light theme: near-black text on a brand-yellow marker. Painted per char so the
+   marker rises and drifts with the SplitText animation instead of sitting there empty. */
+:root:not(.dark) .hero-line--accent .hero-char {
+  background: linear-gradient(180deg, transparent 52%, var(--accent) 52%, var(--accent) 86%, transparent 86%);
+}
+
+/* Testimonial peel: GSAP scrubs --peel 0 → 1; how far the card dims is a theme token */
+.testimonial-inner {
+  --peel: 0;
+  filter: brightness(calc(1 - var(--peel) * var(--peel-dim))) blur(calc(var(--peel) * 2px));
 }
 
 /* SplitText masks */
@@ -220,8 +434,8 @@ html.is-loading #content {
   position: fixed;
   inset: -50%;
   z-index: 60;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grain-opacity);
+  background-image: var(--grain-image);
   animation: grain 0.9s steps(6) infinite;
 }
 

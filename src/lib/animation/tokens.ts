@@ -72,6 +72,7 @@ export const SPRING = {
 /**
  * Brand palette, extracted from the Event Dynamics logo (yellow "e", white "d").
  * Mirrors the CSS tokens in globals.css (@theme) — used by the 3D layer, shaders and canvas-drawn UI.
+ * The top-level values are the dark theme; `light` holds the light-theme page colours (see "Theming" in README).
  * Verify against the logo file with: node scripts/extract-brand-colors.mjs public/brand/logo.png
  */
 export const PALETTE = {
@@ -87,4 +88,12 @@ export const PALETTE = {
   error: "#FF5A52",
   bg: "#07070A",
   bg2: "#0E0E14",
+  light: {
+    bg: "#FFFFFF",
+    bg2: "#F7F7F5",
+    /** Deep gold: the brand-yellow hue at AA contrast on white, for accent text and thin strokes */
+    accentText: "#856210",
+    graphicLine: "#D4D4D4",
+    graphicStrong: "#171717",
+  },
 } as const;
