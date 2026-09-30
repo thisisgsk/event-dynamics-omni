@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useMotionValue, useSpring } from "motion/react";
 import { useEffect, useState } from "react";
 import { BEZIER, DURATION, SPRING } from "@/lib/animation/tokens";
+import { cn } from "@/lib/utils/cn";
 import { useFinePointer } from "@/hooks/useIsMobile";
 
 /** Dot + lagging ring. Elements opt into a label with `data-cursor="Explore"`. */
@@ -63,21 +64,20 @@ export function Cursor() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-[100]" style={{ opacity: visible ? 1 : 0 }}>
       <motion.div
-        className="absolute top-0 left-0 flex items-center justify-center rounded-full border border-brand-yellow/70"
+        // Brand-yellow ring in both themes; on white it gets a hairline dark halo so it stays visible
+        className={cn(
+          "absolute top-0 left-0 flex items-center justify-center rounded-full border border-brand-yellow shadow-[0_0_0_1px_rgb(0_0_0/0.1)] transition-colors duration-(--duration-micro) ease-(--ease-out) dark:border-brand-yellow/70 dark:shadow-none",
+          label ? "bg-brand-yellow/96" : "bg-brand-yellow/0",
+        )}
         style={{ x: ringX, y: ringY, translateX: "-50%", translateY: "-50%" }}
-        animate={{
-          width: ringSize,
-          height: ringSize,
-          backgroundColor: label ? "rgba(235,185,46,0.96)" : "rgba(235,185,46,0)",
-          scale: pressed ? 0.85 : 1,
-        }}
+        animate={{ width: ringSize, height: ringSize, scale: pressed ? 0.85 : 1 }}
         transition={{ duration: DURATION.micro, ease: BEZIER.out }}
       >
         <AnimatePresence>
           {label && (
             <motion.span
               key={label}
-              className="text-[0.7rem] font-semibold tracking-[0.18em] text-bg uppercase"
+              className="text-[0.7rem] font-semibold tracking-[0.18em] text-on-accent uppercase"
               initial={{ opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.6 }}
@@ -89,7 +89,7 @@ export function Cursor() {
         </AnimatePresence>
       </motion.div>
       <motion.div
-        className="absolute top-0 left-0 h-1.5 w-1.5 rounded-full bg-brand-yellow shadow-[0_0_8px_var(--color-brand-yellow)]"
+        className="absolute top-0 left-0 h-1.5 w-1.5 rounded-full bg-accent-ink dark:shadow-[0_0_8px_var(--color-brand-yellow)]"
         style={{ x: dotX, y: dotY, translateX: "-50%", translateY: "-50%" }}
         animate={{ opacity: label ? 0 : 1 }}
       />

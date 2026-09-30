@@ -45,12 +45,9 @@ export function SectionHeading({
     <div ref={wrap} className={cn(align === "center" && "mx-auto text-center", className)}>
       <p
         ref={eyebrowRef}
-        className={cn(
-          "mb-5 flex items-center gap-3 eyebrow !text-brand-yellow",
-          align === "center" && "justify-center",
-        )}
+        className={cn("mb-5 flex items-center gap-3 eyebrow !text-accent-ink", align === "center" && "justify-center")}
       >
-        <span aria-hidden className={cn("h-px w-8 bg-brand-yellow", align === "center" && "hidden")} />
+        <span aria-hidden className={cn("h-px w-8 bg-accent-ink", align === "center" && "hidden")} />
         {eyebrow}
       </p>
       <Tag

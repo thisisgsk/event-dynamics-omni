@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "motion/react";
-import { useRef, type MouseEvent, type ReactNode } from "react";
-import { SPRING } from "@/lib/animation/tokens";
+import { motion } from "motion/react";
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils/cn";
+import { useMagnetic } from "@/hooks/useMagnetic";
 import { usePageTransition } from "@/components/providers/TransitionProvider";
 import { useSound } from "@/components/providers/SoundProvider";
 
@@ -24,13 +24,14 @@ type Props = {
 };
 
 const variants: Record<Variant, string> = {
-  /** Solid brand yellow, dark text (contrast 11:1). */
-  primary: "bg-brand-yellow text-bg hover:shadow-(--glow-yellow-soft) active:bg-yellow-dark",
-  /** White-outlined glass; yellow border, text and glow on hover. */
+  /** Solid brand yellow, near-black text (10:1+ in both themes). Soft yellow glow (dark) / shadow (light) on hover. */
+  primary:
+    "bg-brand-yellow text-on-accent transition-[box-shadow,border-color,color] hover:shadow-(--glow-soft) active:bg-accent-pressed",
+  /** Secondary: white-outlined glass with a yellow hover (dark) · black outline that fills black on hover (light). */
   ghost:
-    "border border-white/40 bg-white/[0.03] text-brand-white backdrop-blur-md hover:border-brand-yellow hover:text-brand-yellow hover:shadow-(--glow-yellow-soft)",
-  /** Hero CTA: brand yellow with a warm glow halo. */
-  glow: "bg-brand-yellow text-bg shadow-(--glow-yellow) hover:shadow-[0_0_56px_-4px_rgb(235_185_46/0.9)] active:bg-yellow-dark",
+    "border border-(--btn-ghost-border) bg-(--btn-ghost-bg) text-(--btn-ghost-text) backdrop-blur-md transition-[box-shadow,border-color,color,background-color] hover:border-(--btn-ghost-hover-border) hover:bg-(--btn-ghost-hover-bg) hover:text-(--btn-ghost-hover-text) hover:shadow-(--btn-ghost-hover-shadow)",
+  /** Hero CTA: brand yellow with a warm glow halo (dark) / a soft yellow-tinted shadow (light). */
+  glow: "bg-brand-yellow text-on-accent shadow-(--glow) transition-[box-shadow,border-color,color] hover:shadow-(--glow-strong) active:bg-accent-pressed",
 };
 
 const sizes = {
@@ -53,28 +54,13 @@ export function MagneticButton({
   strength = 0.35,
   ariaLabel,
 }: Props) {
-  const ref = useRef<HTMLElement>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, SPRING.magnetic);
-  const sy = useSpring(y, SPRING.magnetic);
+  const magnetic = useMagnetic<HTMLElement>(strength);
   const { navigate } = usePageTransition();
   const { tick } = useSound();
 
-  const onMove = (e: MouseEvent) => {
-    const rect = ref.current?.getBoundingClientRect();
-    if (!rect) return;
-    x.set((e.clientX - rect.left - rect.width / 2) * strength);
-    y.set((e.clientY - rect.top - rect.height / 2) * strength);
-  };
-  const reset = () => {
-    x.set(0);
-    y.set(0);
-  };
-
   const classes = cn(
     "group relative inline-flex select-none items-center whitespace-nowrap justify-center gap-3 overflow-hidden rounded-full font-medium tracking-tight",
-    "transition-[box-shadow,border-color,color] duration-(--duration-micro) ease-(--ease-out) disabled:opacity-50",
+    "duration-(--duration-micro) ease-(--ease-out) disabled:opacity-50",
     variants[variant],
     sizes[size],
     className,
@@ -85,16 +71,17 @@ export function MagneticButton({
       {variant !== "ghost" && (
         <span
           aria-hidden
-          className="absolute inset-0 translate-y-full rounded-full bg-yellow-light transition-transform duration-(--duration-ui) ease-(--ease-out) group-hover:translate-y-0 group-active:bg-yellow-dark"
+          className="absolute inset-0 translate-y-full rounded-full bg-accent-hover transition-transform duration-(--duration-ui) ease-(--ease-out) group-hover:translate-y-0 group-active:bg-accent-pressed"
         />
       )}
       {variant === "glow" && (
+        // Pulsing halo is a dark-theme effect; on white, glows are replaced by the soft shadow above
         <span
           aria-hidden
-          className="absolute -inset-3 -z-10 [animation:glow-pulse_3s_ease-in-out_infinite] rounded-full bg-brand-yellow opacity-60 blur-2xl"
+          className="absolute -inset-3 -z-10 hidden [animation:glow-pulse_3s_ease-in-out_infinite] rounded-full bg-brand-yellow opacity-60 blur-2xl dark:block"
         />
       )}
-      <motion.span style={{ x: sx, y: sy }} className="relative z-10 inline-flex items-center gap-3">
+      <motion.span style={{ x: magnetic.x, y: magnetic.y }} className="relative z-10 inline-flex items-center gap-3">
         {children}
       </motion.span>
     </>
@@ -102,10 +89,10 @@ export function MagneticButton({
 
   const common = {
     className: classes,
-    style: { x: sx, y: sy },
-    onMouseMove: onMove,
+    style: { x: magnetic.x, y: magnetic.y },
+    onMouseMove: magnetic.onMouseMove,
     onMouseEnter: tick,
-    onMouseLeave: reset,
+    onMouseLeave: magnetic.onMouseLeave,
     "data-cursor": cursorLabel,
     "aria-label": ariaLabel,
   };
@@ -114,7 +101,7 @@ export function MagneticButton({
     return (
       <motion.a
         {...common}
-        ref={ref as React.Ref<HTMLAnchorElement>}
+        ref={magnetic.ref as React.Ref<HTMLAnchorElement>}
         href={href}
         onClick={(e) => {
           if (href.startsWith("http")) return;
@@ -131,7 +118,7 @@ export function MagneticButton({
   return (
     <motion.button
       {...common}
-      ref={ref as React.Ref<HTMLButtonElement>}
+      ref={magnetic.ref as React.Ref<HTMLButtonElement>}
       type={type}
       onClick={onClick}
       disabled={disabled}

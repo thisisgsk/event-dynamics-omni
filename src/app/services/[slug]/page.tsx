@@ -42,8 +42,9 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
           className="relative isolate flex min-h-svh items-end overflow-hidden pt-32 pb-16 md:pb-24"
         >
           <Image src={room.image} alt="" fill priority sizes="100vw" className="-z-20 object-cover opacity-45" />
-          <div aria-hidden className="absolute inset-0 -z-10 scrim-bottom" />
-          <div aria-hidden className="absolute inset-0 -z-10 scrim-left" />
+          {/* The faded photo melts into the page colour: near-black on dark, white on light (text follows the theme) */}
+          <div aria-hidden className="absolute inset-0 -z-10 veil-bottom" />
+          <div aria-hidden className="absolute inset-0 -z-10 veil-left" />
           <div className="container-site">
             <TransitionLink
               href="/#services"
@@ -65,7 +66,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               {room.tags.map((t) => (
                 <li
                   key={t}
-                  className="rounded-full border border-white/15 bg-black/40 px-4 py-2 text-sm backdrop-blur-md"
+                  className="rounded-full border border-ink/15 bg-bg/60 px-4 py-2 text-sm backdrop-blur-md dark:bg-black/40"
                 >
                   <span
                     aria-hidden

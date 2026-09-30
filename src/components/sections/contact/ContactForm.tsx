@@ -57,7 +57,7 @@ export function ContactForm() {
           >
             <span
               aria-hidden
-              className="mb-8 flex h-14 w-14 items-center justify-center rounded-full bg-brand-yellow text-2xl text-bg shadow-(--glow-yellow)"
+              className="mb-8 flex h-14 w-14 items-center justify-center rounded-full bg-brand-yellow text-2xl text-on-accent shadow-(--glow)"
             >
               ✓
             </span>
@@ -110,7 +110,7 @@ export function ContactForm() {
             />
 
             <div className="flex flex-col items-start gap-4 md:col-span-2 md:flex-row md:items-center md:justify-between">
-              <p className="text-sm text-dim" aria-live="polite">
+              <p className="text-sm text-error dark:text-dim" aria-live="polite">
                 {status === "error" ? "Something went wrong — please try again." : ""}
               </p>
               <MagneticButton type="submit" variant="glow" disabled={isSubmitting} cursorLabel="Send">

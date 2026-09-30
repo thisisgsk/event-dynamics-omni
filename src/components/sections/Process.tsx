@@ -129,18 +129,18 @@ export function Process() {
       >
         <defs>
           <linearGradient id="process-gradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stopColor="var(--color-brand-yellow)" />
-            <stop offset="0.55" stopColor="var(--color-yellow-soft)" />
-            <stop offset="1" stopColor="var(--color-brand-white)" />
+            <stop offset="0" stopColor="var(--process-stop-a)" />
+            <stop offset="0.55" stopColor="var(--process-stop-b)" />
+            <stop offset="1" stopColor="var(--process-stop-c)" />
           </linearGradient>
         </defs>
-        <path d={d} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeDasharray="4 8" />
+        <path d={d} fill="none" stroke="var(--graphic-line)" strokeWidth="1.5" strokeDasharray="4 8" />
         <path ref={path} d={d} fill="none" stroke="url(#process-gradient)" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
 
       <ol className="process-list relative mt-14 space-y-5 pl-8 md:static md:mt-0 md:space-y-0 md:pl-0">
         <span aria-hidden className="absolute top-0 bottom-0 left-2 w-px bg-line md:hidden">
-          <span className="process-rail-fill absolute inset-0 origin-top bg-accent" />
+          <span className="process-rail-fill absolute inset-0 origin-top bg-accent-line" />
         </span>
         {processContent.steps.map((step, i) => {
           const [nx, ny] = PROCESS_POINTS[PROCESS_ANCHORS[i]];
@@ -156,7 +156,7 @@ export function Process() {
                 aria-hidden
                 className={cn(
                   "absolute top-7 -left-[1.9rem] h-3 w-3 rounded-full border transition-all duration-(--duration-ui) md:hidden",
-                  active ? "border-transparent bg-accent" : "border-white/30 bg-bg",
+                  active ? "border-transparent bg-accent" : "border-ink/30 bg-bg",
                 )}
               />
               {/* Desktop: a thin tick connecting the card to its anchor on the path */}
@@ -164,7 +164,7 @@ export function Process() {
                 aria-hidden
                 className={cn(
                   "absolute bottom-full left-1/2 hidden w-px origin-bottom transition-colors duration-(--duration-ui) md:block",
-                  active ? "bg-white/40" : "bg-white/10",
+                  active ? "bg-ink/40" : "bg-ink/10",
                 )}
                 style={{ height: `calc(${62 - yPct}svh - 0.6rem)` }}
               />
@@ -184,7 +184,7 @@ export function Process() {
                     aria-hidden
                     className={cn(
                       "h-2 w-2 rounded-full transition-colors duration-(--duration-ui)",
-                      active ? "bg-brand-yellow shadow-[0_0_14px_var(--color-brand-yellow)]" : "bg-white/20",
+                      active ? "bg-brand-yellow dark:shadow-[0_0_14px_var(--color-brand-yellow)]" : "bg-ink/20",
                     )}
                   />
                 </div>

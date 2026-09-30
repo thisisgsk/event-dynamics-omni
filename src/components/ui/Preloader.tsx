@@ -130,10 +130,10 @@ export function Preloader() {
       className="fixed inset-0 z-[90] [clip-path:inset(0%_0%_0%_0%)]"
       style={{
         background:
-          "radial-gradient(60% 60% at 50% 45%, rgba(7,7,10,0) 0%, rgba(7,7,10,0.55) 70%, rgba(7,7,10,0.9) 100%)",
+          "radial-gradient(60% 60% at 50% 45%, rgb(var(--veil) / 0) 0%, rgb(var(--veil) / 0.55) 70%, rgb(var(--veil) / 0.9) 100%)",
       }}
     >
-      <div className="preloader-edge absolute inset-x-0 bottom-0 h-px bg-accent" />
+      <div className="preloader-edge absolute inset-x-0 bottom-0 h-px bg-accent-line" />
       <div className="absolute inset-x-0 bottom-0 container-site pb-8 md:pb-12">
         <p
           ref={wordmark}
@@ -152,7 +152,7 @@ export function Preloader() {
           </span>
         </div>
         <div className="preloader-meta mt-5 h-px w-full bg-line">
-          <div ref={bar} className="h-full origin-left scale-x-0 bg-accent" />
+          <div ref={bar} className="h-full origin-left scale-x-0 bg-accent-line" />
         </div>
       </div>
     </div>

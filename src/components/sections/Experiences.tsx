@@ -14,9 +14,10 @@ function ExperienceCard({ item, index }: { item: Item; index: number }) {
   return (
     <li className="exp-card w-[78vw] shrink-0 snap-center sm:w-[56vw] md:w-[34vw] lg:w-[26vw]">
       <TiltCard className="h-full">
+        {/* Photo surface: always renders with the dark tokens so the white text keeps its contrast */}
         <article
           data-cursor="View"
-          className="group relative isolate h-[62svh] max-h-[640px] min-h-[420px] overflow-hidden rounded-card border border-line bg-surface"
+          className="dark group photo-lift relative isolate h-[62svh] max-h-[640px] min-h-[420px] overflow-hidden rounded-card border border-line bg-surface text-fg"
         >
           <Image
             src={item.image}
@@ -32,7 +33,7 @@ function ExperienceCard({ item, index }: { item: Item; index: number }) {
           />
           <div className="flex h-full flex-col justify-between p-6 md:p-7">
             <div className="flex items-center justify-between text-xs tracking-[0.2em] text-fg/80 uppercase">
-              <span className="rounded-full border border-white/20 bg-black/30 px-3 py-1.5 backdrop-blur-md">
+              <span className="rounded-full border border-ink/20 bg-black/30 px-3 py-1.5 backdrop-blur-md">
                 {item.category}
               </span>
               <span className="tabular-nums">{String(index + 1).padStart(2, "0")}</span>

@@ -27,12 +27,13 @@ export function Testimonials() {
         cards.forEach((card, i) => {
           const next = cards[i + 1];
           if (!next) return;
-          // Each card peels back as the next one slides over it
+          // Each card peels back as the next one slides over it. --peel drives the dim + blur filter in globals.css,
+          // where the dim amount is a theme token (dark cards sink into shadow, white cards only grey slightly).
           gsap.to(card.querySelector(".testimonial-inner"), {
             scale: 0.9,
             rotateX: -10,
             yPercent: -6,
-            filter: "brightness(0.45) blur(2px)",
+            "--peel": 1,
             ease: EASE.none,
             scrollTrigger: {
               trigger: next,
@@ -87,7 +88,7 @@ export function Testimonials() {
                   <span className="eyebrow">
                     {String(i + 1).padStart(2, "0")} / {String(work.testimonials.length).padStart(2, "0")}
                   </span>
-                  <span aria-hidden className="h-px w-16 bg-accent" />
+                  <span aria-hidden className="h-px w-16 bg-accent-line" />
                 </div>
                 <blockquote className="mt-8 font-display text-2xl leading-snug font-medium text-balance md:text-[2.1rem]">
                   {t.quote}
