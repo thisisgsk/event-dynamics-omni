@@ -403,8 +403,9 @@ html.theme-fade *::after {
   isolation: isolate;
   border-radius: var(--radius-card);
   background: var(--surface-glass);
-  backdrop-filter: blur(22px) saturate(140%);
+  /* Prefixed first: the other order makes the production minifier keep only the -webkit- one (ignored by Chromium) */
   -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
   box-shadow: var(--glass-inner), var(--shadow);
 }
 
