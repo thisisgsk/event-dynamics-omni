@@ -296,6 +296,7 @@ export const footer = {
 export const ui = {
   sound: { on: "Sound on", off: "Sound off" },
   menu: { open: "Open menu", close: "Close menu" },
+  theme: { toLight: "Switch to light mode", toDark: "Switch to dark mode", toggle: "Toggle colour theme" },
   roomRail: "Service rooms",
   backHome: "Back to home",
 } as const;

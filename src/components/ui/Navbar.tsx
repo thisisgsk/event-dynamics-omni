@@ -12,6 +12,7 @@ import { BrandLockup } from "./BrandLogo";
 import { MagneticButton } from "./MagneticButton";
 import { MobileMenu } from "./MobileMenu";
 import { SoundToggle } from "./SoundToggle";
+import { ThemeToggle } from "./ThemeToggle";
 import { TransitionLink } from "./TransitionLink";
 
 const SECTION_IDS = nav.links.map((l) => l.href.replace("#", ""));
@@ -91,7 +92,11 @@ export function Navbar() {
 
           <div className="flex items-center gap-2 md:gap-3">
             <SoundToggle />
-            {/* Wrapper controls visibility: the button's own inline-flex would override `hidden` */}
+            {/* Wrappers control visibility: the buttons' own (inline-)flex would override `hidden`.
+                Below md the theme toggle lives in the mobile menu. */}
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
             <div className="hidden md:block">
               <MagneticButton href={nav.cta.href} size="sm" variant="primary" cursorLabel="Plan">
                 {nav.cta.label}
