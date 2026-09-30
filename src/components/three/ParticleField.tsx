@@ -5,6 +5,7 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
+import { blendSwitchVisibility, LIGHT_SCENE } from "@/lib/theme/scene";
 
 const vertex = /* glsl */ `
 attribute float aSeed;
@@ -29,6 +30,9 @@ void main() {
 const fragment = /* glsl */ `
 uniform vec3 uTint;
 uniform float uOpacity;
+uniform float uLight;
+uniform vec3 uInk;
+uniform float uThemeAlpha;
 varying float vTwinkle;
 varying float vDepth;
 
@@ -37,11 +41,13 @@ void main() {
   float a = smoothstep(0.5, 0.0, d);
   a *= a;
   vec3 col = mix(vec3(1.0), uTint, 0.55 + vDepth * 0.4);
-  gl_FragColor = vec4(col, a * vTwinkle * uOpacity * (1.0 - vDepth * 0.6));
+  // Light theme: dark grey/black dust instead of glowing motes
+  col = mix(col, uInk, uLight);
+  gl_FragColor = vec4(col, a * vTwinkle * uOpacity * (1.0 - vDepth * 0.6) * uThemeAlpha);
 }
 `;
 
-/** Ambient star/dust field — one draw call. */
+/** Ambient star/dust field — one draw call. Glowing additive motes on dark, fine dark dust on light. */
 export function ParticleField({ count }: { count: number }) {
   const points = useRef<THREE.Points>(null);
 
@@ -67,6 +73,9 @@ export function ParticleField({ count }: { count: number }) {
       uPixelRatio: { value: 1 },
       uTint: { value: new THREE.Color(PALETTE.brandYellow) },
       uOpacity: { value: 1 },
+      uLight: { value: 0 },
+      uInk: { value: new THREE.Color() },
+      uThemeAlpha: { value: 1 },
     }),
     [],
   );
@@ -91,6 +100,13 @@ export function ParticleField({ count }: { count: number }) {
     uniforms.uPixelRatio.value = state.gl.getPixelRatio();
     uniforms.uTint.value.lerp(tmp.setRGB(g.r, g.g, g.b), 1 - Math.exp(-2 * delta));
     uniforms.uOpacity.value = THREE.MathUtils.damp(uniforms.uOpacity.value, g.particles, 3, delta);
+    const t = scene.theme;
+    uniforms.uLight.value = t.light;
+    uniforms.uInk.value.setRGB(t.particle.r, t.particle.g, t.particle.b, THREE.SRGBColorSpace);
+    uniforms.uSize.value = THREE.MathUtils.lerp(5, LIGHT_SCENE.particleSize, t.light);
+    uniforms.uThemeAlpha.value =
+      t.light > 0 ? THREE.MathUtils.lerp(1, LIGHT_SCENE.particleAlpha, t.light) * blendSwitchVisibility(t.light) : 1;
+    material.blending = t.light < 0.5 ? THREE.AdditiveBlending : THREE.NormalBlending;
     const p = points.current!;
     p.rotation.y = THREE.MathUtils.damp(p.rotation.y, scene.pointer.x * 0.06 + g.ry * 0.015, 2, delta);
     p.rotation.x = THREE.MathUtils.damp(p.rotation.x, -scene.pointer.y * 0.04, 2, delta);

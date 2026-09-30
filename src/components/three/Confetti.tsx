@@ -6,7 +6,17 @@ import * as THREE from "three";
 import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
 
-const COLORS = [PALETTE.brandYellow, PALETTE.yellowLight, PALETTE.yellowSoft, PALETTE.brandWhite, PALETTE.yellowDark];
+const COLORS = {
+  dark: [PALETTE.brandYellow, PALETTE.yellowLight, PALETTE.yellowSoft, PALETTE.brandWhite, PALETTE.yellowDark],
+  // White and pale yellow vanish on the light page: swap them for deep gold and graphite
+  light: [
+    PALETTE.brandYellow,
+    PALETTE.yellowLight,
+    PALETTE.light.accentText,
+    PALETTE.light.graphicStrong,
+    PALETTE.yellowDark,
+  ],
+};
 const LIFETIME = 4.5;
 
 /** Instanced confetti burst, fired by setting `scene.confettiAt` (contact form success). */
@@ -28,15 +38,17 @@ export function Confetti({ count = 260 }: { count?: number }) {
   );
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
-  const colorsSet = useRef(false);
+  const colorsSet = useRef<keyof typeof COLORS | null>(null);
 
   useFrame((state, delta) => {
     const m = mesh.current!;
-    if (!colorsSet.current) {
+    const palette = scene.theme.light < 0.5 ? "dark" : "light";
+    if (colorsSet.current !== palette) {
       const c = new THREE.Color();
-      for (let i = 0; i < count; i++) m.setColorAt(i, c.set(COLORS[i % COLORS.length]));
+      const colors = COLORS[palette];
+      for (let i = 0; i < count; i++) m.setColorAt(i, c.set(colors[i % colors.length]));
       m.instanceColor!.needsUpdate = true;
-      colorsSet.current = true;
+      colorsSet.current = palette;
     }
 
     if (scene.confettiAt !== lastBurst.current && scene.confettiAt > 0) {

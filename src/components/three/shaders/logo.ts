@@ -57,11 +57,12 @@ export const lineFragment = /* glsl */ `
 uniform float uDraw;
 uniform float uOpacity;
 uniform vec3 uColor;
+uniform vec3 uHead;
 varying float vProgress;
 
 void main() {
   if (vProgress > uDraw) discard;
   float head = smoothstep(uDraw - 0.08, uDraw, vProgress);
-  gl_FragColor = vec4(mix(uColor, vec3(1.0), head), uOpacity * (0.55 + head));
+  gl_FragColor = vec4(mix(uColor, uHead, head), uOpacity * (0.55 + head));
 }
 `;
