@@ -15,7 +15,10 @@ ROOM_TEXTURES.forEach((src) => useTexture.preload(src));
 const tint = new THREE.Color();
 const guideTint = new THREE.Color();
 
-/** Deep background: #07070A → #0E0E14 gradient with a soft tinted glow that follows the pointer. */
+/**
+ * Page background: #07070A → #0E0E14 with a soft tinted glow that follows the pointer (dark),
+ * #FFFFFF → #F7F7F5 (light). Colours come from the theme tokens via scene.theme.
+ */
 export function Backdrop() {
   const uniforms = useMemo(
     () => ({
@@ -25,6 +28,7 @@ export function Backdrop() {
       uMouse: { value: new THREE.Vector2() },
       uTime: { value: 0 },
       uRes: { value: new THREE.Vector2(1, 1) },
+      uLight: { value: 0 },
     }),
     [],
   );
@@ -43,6 +47,11 @@ export function Backdrop() {
 
   useFrame((state, delta) => {
     const g = scene.guide;
+    const t = scene.theme;
+    uniforms.uTop.value.setRGB(t.bgTop.r, t.bgTop.g, t.bgTop.b, THREE.SRGBColorSpace);
+    uniforms.uBottom.value.setRGB(t.bgBottom.r, t.bgBottom.g, t.bgBottom.b, THREE.SRGBColorSpace);
+    uniforms.uLight.value = t.light;
+    if (state.scene.background instanceof THREE.Color) state.scene.background.copy(uniforms.uTop.value);
     uniforms.uRes.value.set(state.size.width, state.size.height);
     uniforms.uTime.value += delta;
     uniforms.uTint.value.lerp(guideTint.setRGB(g.r, g.g, g.b), 1 - Math.exp(-3 * delta));

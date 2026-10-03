@@ -7,10 +7,12 @@ import { Confetti } from "./Confetti";
 import { Effects } from "./Effects";
 import { GuideLogo } from "./GuideLogo";
 import { CameraRig, Lighting } from "./Lighting";
+import { LogoShadow } from "./LogoShadow";
 import { LowPolyShell } from "./LowPolyShell";
 import { ParticleField } from "./ParticleField";
 import { RoomAtmospherics } from "./RoomAtmospherics";
 import { Backdrop, RoomsPortal } from "./RoomsPortal";
+import { ThemeSync } from "./ThemeSync";
 
 type Props = { lite: boolean; reduced: boolean };
 
@@ -18,6 +20,7 @@ type Props = { lite: boolean; reduced: boolean };
 export function Scene({ lite, reduced }: Props) {
   return (
     <>
+      <ThemeSync />
       <color attach="background" args={[PALETTE.bg]} />
       <Backdrop />
       <Suspense fallback={null}>
@@ -36,6 +39,7 @@ export function Scene({ lite, reduced }: Props) {
       >
         <GuideLogo />
       </Float>
+      <LogoShadow />
       <Confetti count={lite ? 140 : 260} />
       <Effects lite={lite} />
     </>

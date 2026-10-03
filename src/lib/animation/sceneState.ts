@@ -1,4 +1,5 @@
-import { POSES, type Pose } from "./poses";
+import { hexToRgb, POSES, type Pose } from "./poses";
+import { PALETTE } from "./tokens";
 
 /**
  * The bridge between GSAP (DOM / scroll) and React Three Fiber.
@@ -19,6 +20,25 @@ export const scene = {
   canvasReady: false,
   isMobile: false,
   reduced: false,
+  /**
+   * Theme blend for the 3D layer, written by <ThemeSync> from the CSS tokens (see useThemeColors).
+   * `light` goes 0 (dark) → 1 (light); every theme-dependent number in the scene lerps with it, so dark mode
+   * is exactly the original values. Colours are sRGB 0…1.
+   */
+  theme: {
+    light: 0,
+    /** Set by the theme toggle when a View Transition reveal covers the switch: jump instead of tweening */
+    instant: false,
+    bgTop: hexToRgb(PALETTE.bg),
+    bgBottom: hexToRgb(PALETTE.bg2),
+    logoE: hexToRgb(PALETTE.brandYellow),
+    logoD: hexToRgb(PALETTE.brandWhite),
+    line: hexToRgb(PALETTE.brandWhite),
+    particle: hexToRgb(PALETTE.brandWhite),
+    strong: hexToRgb(PALETTE.brandWhite),
+  },
+  /** Where the guide logo actually is this frame (after damping) — the light theme's contact shadow follows it */
+  logo: { x: 0, y: 0, z: 0, scale: 1, dissolve: 0 },
   /** Dev tuning (Leva) — safe defaults for production */
   tuning: {
     bloom: 0.9,

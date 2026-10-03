@@ -24,7 +24,8 @@ export function Hero() {
       const mm = gsap.matchMedia();
       const splits = gsap.utils
         .toArray<HTMLElement>(".hero-line")
-        .map((el) => SplitText.create(el, { type: "words,chars", mask: "chars" }));
+        // hero-char: the light theme paints its yellow marker per char (globals.css) so it moves with the letters
+        .map((el) => SplitText.create(el, { type: "words,chars", mask: "chars", charsClass: "hero-char" }));
       const chars = splits.flatMap((s) => s.chars);
 
       // Intro reveal plays once the preloader lifts (part of the preloader sequence)
@@ -116,24 +117,25 @@ export function Hero() {
       <div className="relative container-site flex h-full flex-col justify-between pt-28 pb-10 [perspective:900px] md:pt-32 md:pb-12">
         <h1 className="pointer-events-none relative mt-[6vh] display-xl uppercase [transform-style:preserve-3d]">
           <span data-depth="0.5" className="block">
-            <span className="hero-line block text-brand-white">{lineA}</span>
+            <span className="hero-line block text-fg dark:text-brand-white">{lineA}</span>
           </span>
           <span data-depth="1" className="mt-[26vh] block text-right md:mt-[30vh]">
-            <span className="hero-line block text-brand-yellow [text-shadow:0_0_40px_rgb(235_185_46/0.35)]">
+            {/* Accent words: brand yellow with a glow (dark) · near-black on a brand-yellow marker (light) */}
+            <span className="hero-line hero-line--accent block text-fg dark:text-brand-yellow dark:[text-shadow:0_0_40px_rgb(235_185_46/0.35)]">
               {lineB}
             </span>
           </span>
         </h1>
 
         <div className="hero-bottom flex items-end justify-between gap-6">
-          <p className="hero-sub max-w-sm text-base text-fg/85 md:text-lg">
-            <span className="font-medium text-brand-yellow">{subHead}</span>
+          <p className="hero-sub max-w-sm text-base text-body md:text-lg">
+            <span className="font-medium text-accent-ink">{subHead}</span>
             {subTail && <> — {subTail}</>}
           </p>
           <div className="hero-hint flex flex-col items-center gap-3" aria-hidden>
             <span className="eyebrow text-[0.65rem]">{hero.scrollHint}</span>
             <span className="relative block h-12 w-px overflow-hidden bg-line">
-              <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-hint_1.8s_var(--ease-in-out)_infinite] bg-brand-yellow" />
+              <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-hint_1.8s_var(--ease-in-out)_infinite] bg-accent-ink" />
             </span>
           </div>
         </div>

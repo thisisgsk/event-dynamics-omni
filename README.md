@@ -36,16 +36,17 @@ src/
 │  └─ globals.css             Tailwind v4 @theme design tokens, glass surface, utilities
 ├─ content/site.ts            ALL copy, stats, rooms, events, testimonials, links
 ├─ components/
-│  ├─ providers/              AppShell, SmoothScroll (Lenis ⇄ GSAP), TransitionProvider (curtain), SoundProvider
+│  ├─ providers/              AppShell, ThemeProvider (next-themes), SmoothScroll (Lenis ⇄ GSAP), TransitionProvider (curtain), SoundProvider
 │  ├─ three/                  the single <Canvas>: Scene, GuideLogo, RoomsPortal, particles, beams, confetti, Effects
 │  │  └─ shaders/             GLSL for logo dissolve, contour lines, room portal/wipe, noise
 │  ├─ sections/               Hero, About, services/*, Experiences, Process, Testimonials, Finale, contact/*, Footer,
 │  │                          GuideTimeline (master timeline), GuidePose (sub-page poses)
-│  └─ ui/                     GlassCard, MagneticButton, Cursor, Navbar, MobileMenu, SectionHeading, TiltCard, Preloader…
-├─ hooks/                     useSplitReveal, useMediaQuery, useReducedMotion, useIsMobile
+│  └─ ui/                     GlassCard, MagneticButton, ThemeToggle, Cursor, Navbar, MobileMenu, SectionHeading, TiltCard, Preloader…
+├─ hooks/                     useSplitReveal, useMediaQuery, useReducedMotion, useIsMobile, useMagnetic, useThemeColors
 └─ lib/
    ├─ animation/              tokens.ts, gsap.ts, sceneState.ts, poses.ts, processCurve.ts, ready.ts
    ├─ brand/logo.ts           the traced monogram paths (single source for DOM, 3D, icons, OG)
+   ├─ theme/                  switchTheme (circular reveal / crossfade), scene.ts (light-theme 3D values)
    ├─ validation/contact.ts   zod schema shared by form + API
    └─ utils/
 ```
@@ -81,6 +82,48 @@ Extracted from the logo (yellow "e", white "d"). CSS tokens live in `globals.css
 
 The accent gradient runs brand yellow → yellow-soft → brand white. Dark text on brand yellow is 11:1 and brand yellow on #07070A is 11:1, so both pass WCAG AA.
 To re-verify the brand hexes against the real logo file, save it as `public/brand/logo.png` and run `node scripts/extract-brand-colors.mjs`.
+
+### Theming (light & dark)
+
+The site ships two equal themes. **Dark** is the original look; **light** is a white, graphite-and-gold variant. Layout, scroll choreography, pinning and 3D behaviour are identical in both — only colours, materials and theme styling change.
+
+**How it's wired**
+
+- `next-themes` (`components/providers/ThemeProvider.tsx`) puts `dark` (or `light`) on `<html>`: `defaultTheme="system"` follows the OS on the first visit, then the visitor's choice is remembered in `localStorage` (`theme`). Its blocking script sets the class before first paint, so there's no flash on load or refresh.
+- `globals.css` defines **semantic tokens** under `:root` (light, also the no-JS default) and `.dark` (dark). Tailwind utilities map onto them in `@theme inline` (`bg-bg`, `text-fg`, `text-body`, `text-muted`, `border-line`, `text-accent-ink`, `text-on-accent`, `bg-ink/[0.03]` …), so every component is written once. The `dark:` variant is class-based: `@custom-variant dark (&:where(.dark, .dark *))`.
+- **Photo surfaces** (room overlays, gallery cards, bento tiles, reduced-motion service panels) carry `class="dark"`, so they always use the dark tokens: white text over a dark scrim on the imagery in both themes.
+- **Toggle**: `components/ui/ThemeToggle.tsx` (navbar ≥768px and the mobile menu). `lib/theme/switchTheme.ts` does a View Transitions circular reveal from the button, falls back to a quick colour crossfade where unsupported, and switches instantly with `prefers-reduced-motion`. Only colours change — no `ScrollTrigger.refresh()`, scroll position or timeline progress is touched.
+- **3D**: `hooks/useThemeColors.ts` watches `<html>`'s class and reads the `--scene-*` tokens. `components/three/ThemeSync.tsx` tweens `scene.theme` toward them (GSAP, 0.6s — or instantly when the circular reveal already covers the switch). Every theme-dependent value in the scene blends with `scene.theme.light` (0 = dark, 1 = light); nothing is rebuilt or remounted. Light-only numbers (env intensity, roughness, bloom, grain, particle size…) live in `lib/theme/scene.ts`; the dark values are the original ones.
+
+**Key tokens**
+
+| Token                                 | Dark                        | Light                                                  | Use                                                                   |
+| ------------------------------------- | --------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------- |
+| `--bg` / `--bg-alt` / `--bg-elevated` | #07070A / #0E0E14 / #13131B | #FFFFFF / #F7F7F5 / #F2F2EF                            | page, backdrop gradient, raised surfaces                              |
+| `--text-primary`                      | #F5F1E8                     | #111111                                                | headings, default text                                                |
+| `--text-secondary`                    | #F5F1E8 at 85%              | #3F3F3F                                                | body copy                                                             |
+| `--text-muted` / `--text-dim`         | #ABA59A / #7D776C           | #6B6B6B                                                | eyebrows, meta (#6B6B6B keeps ≥4.75:1 on every light background)      |
+| `--accent`                            | #EBB92E                     | #EBB92E                                                | fills: buttons, progress, active dots, cursor ring, rail bar          |
+| `--accent-hover` / `--accent-pressed` | #F5D268 / #C8961C           | #DDA71D / #C8961C                                      | primary button hover (lighter on dark, darker on light) / pressed     |
+| `--accent-text`                       | #EBB92E                     | #856210                                                | accent **text and thin strokes** (deep gold, same hue, ≥5:1 on white) |
+| `--on-accent`                         | #07070A                     | #111111                                                | text on yellow (10:1+)                                                |
+| `--border`                            | white 10%                   | black 10%                                              | hairlines                                                             |
+| `--surface-glass` / `--glass-edge`    | smoked glass                | frosted white 66–78% + yellow edge                     | `<GlassCard>`                                                         |
+| `--glow` / `--glow-soft` / `--shadow` | yellow glows                | soft yellow-tinted / neutral grey shadows              | buttons, cards                                                        |
+| `--graphic-line` / `-mid` / `-strong` | white 12% / 40% / white     | #D4D4D4 / #737373 / #171717                            | Process track, dashes, 3D wireframe (light)                           |
+| `--logo-d`                            | #FFFFFF                     | #111111                                                | the monogram's "d" (the yellow "e" never changes)                     |
+| `--scrim`                             | 7 7 10                      | 7 7 10                                                 | photo scrims — dark in **both** themes                                |
+| `--veil`                              | 7 7 10                      | 255 255 255                                            | page-coloured fades (preloader, service hero)                         |
+| `--error`                             | #FF5A52                     | #C8211B                                                | validation                                                            |
+| `--scene-*`                           | originals                   | white backdrop, gold `e` #E6B22B, graphite `d` #262626 | 3D colours (hex only — parsed by `useThemeColors`)                    |
+
+**Adjusting a theme**
+
+- Change a colour in one place: edit the token under `:root` (light) or `.dark` (dark) in `globals.css`. Components pick it up automatically.
+- Accent text on light must stay ≥4.5:1 — the brand yellow itself is 1.8:1 on white, so never use `text-brand-yellow` for text on the light page; use `text-accent-ink`.
+- 3D look: colours via the `--scene-*` tokens, numbers via `LIGHT_SCENE` in `lib/theme/scene.ts` (the light theme's logo metal, key light, bloom threshold, grain, particle size, contact-shadow opacity).
+- One-off differences use Tailwind's `dark:` variant with the light value as the base class (e.g. `text-fg dark:text-brand-white`).
+- The favicon and OG image keep their dark tile/background in both themes (they're rendered outside the page), so they need no light variant.
 
 ### Tuning animation
 

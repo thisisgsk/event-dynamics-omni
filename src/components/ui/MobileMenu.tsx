@@ -7,6 +7,7 @@ import { brand, nav } from "@/content/site";
 import { BEZIER, DURATION, STAGGER } from "@/lib/animation/tokens";
 import { BrandTagline } from "./BrandLogo";
 import { MagneticButton } from "./MagneticButton";
+import { ThemeToggle } from "./ThemeToggle";
 import { TransitionLink } from "./TransitionLink";
 
 export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -74,11 +75,14 @@ export function MobileMenu({ open, onClose }: { open: boolean; onClose: () => vo
             <MagneticButton href={nav.cta.href} variant="glow" onClick={onClose} className="w-full">
               {nav.cta.label}
             </MagneticButton>
-            <div className="flex flex-col gap-3 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
-              <BrandTagline className="text-[0.6rem]" />
-              <a href={`mailto:${brand.email}`} className="underline-offset-4 hover:underline">
-                {brand.email}
-              </a>
+            <div className="flex items-center justify-between gap-4 text-sm text-muted">
+              <div className="flex flex-col gap-3 sm:flex-1 sm:flex-row sm:items-center sm:justify-between">
+                <BrandTagline className="text-[0.6rem]" />
+                <a href={`mailto:${brand.email}`} className="underline-offset-4 hover:underline">
+                  {brand.email}
+                </a>
+              </div>
+              <ThemeToggle tooltip="above-end" />
             </div>
           </motion.div>
         </motion.div>

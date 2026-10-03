@@ -116,7 +116,8 @@ export function Finale() {
         >
           {services.rooms.map((room, i) => (
             <li key={room.slug} className={`bento-tile relative aspect-[4/3] md:aspect-auto ${PLACEMENT[i]}`}>
-              <article className="group relative isolate h-full overflow-hidden rounded-card border border-line">
+              {/* Photo surface: dark tokens in both themes */}
+              <article className="dark group photo-lift relative isolate h-full overflow-hidden rounded-card border border-line text-fg">
                 <Image
                   src={room.image}
                   alt=""
@@ -126,7 +127,7 @@ export function Finale() {
                 />
                 <div aria-hidden className="absolute inset-0 -z-10 scrim-bottom" />
                 <div className="flex h-full flex-col justify-end p-4 md:p-5">
-                  <p className="eyebrow !text-[0.6rem] !text-brand-yellow">Room {room.index}</p>
+                  <p className="eyebrow !text-[0.6rem] !text-accent-ink">Room {room.index}</p>
                   <h3 className="mt-1 font-display text-base leading-tight font-bold md:text-xl">{room.title}</h3>
                 </div>
               </article>

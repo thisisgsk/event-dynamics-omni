@@ -4,6 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { DAMP, PALETTE } from "@/lib/animation/tokens";
+import { blendSwitchVisibility, LIGHT_SCENE } from "@/lib/theme/scene";
 import CustomShaderMaterial from "three-custom-shader-material";
 import { scene } from "@/lib/animation/sceneState";
 import { getProcessCurve } from "@/lib/animation/processCurve";
@@ -15,8 +16,17 @@ const { damp, lerp } = THREE.MathUtils;
 const tmpPoint = new THREE.Vector3();
 const roomColor = new THREE.Color();
 const guideColor = new THREE.Color();
+const themeColor = new THREE.Color();
+const WHITE = new THREE.Color(1, 1, 1);
+/** Scene-graph name of the logo's root group (the light theme's contact shadow looks it up) */
+export const GUIDE_LOGO_NAME = "guide-logo";
+const HEAD_LIGHT = new THREE.Color(PALETTE.brandYellow);
 
-/** The persistent chrome "ed" monogram that travels through the whole story. */
+/**
+ * The persistent chrome "ed" monogram that travels through the whole story.
+ * Dark: gold "e" + bright white metal "d". Light: deeper gold "e" + polished graphite "d" with warm yellow
+ * reflections, so it holds strong contrast on white (materials only — the geometry never changes).
+ */
 export function GuideLogo() {
   const group = useRef<THREE.Group>(null);
   const tilt = useRef<THREE.Group>(null);
@@ -40,6 +50,7 @@ export function GuideLogo() {
       uConverge: { value: 0 },
       uOpacity: { value: 0 },
       uColor: { value: new THREE.Color(PALETTE.yellowLight) },
+      uHead: { value: new THREE.Color(1, 1, 1) },
     }),
     [],
   );
@@ -89,12 +100,16 @@ export function GuideLogo() {
     c.px = damp(c.px, scene.pointer.x, DAMP.pointer, dt);
     c.py = damp(c.py, scene.pointer.y, DAMP.pointer, dt);
 
-    // Live tuning (Leva in dev, constants in production)
-    [meshE.current, meshD.current].forEach((m) => {
+    // Live tuning (Leva in dev, constants in production), blended toward the light-theme metal
+    const theme = scene.theme;
+    const L = theme.light;
+    [meshE.current, meshD.current].forEach((m, i) => {
       const mat = m?.material as THREE.MeshPhysicalMaterial | undefined;
       if (!mat) return;
-      mat.roughness = scene.tuning.roughness;
-      mat.envMapIntensity = scene.tuning.envIntensity;
+      mat.roughness = lerp(scene.tuning.roughness, LIGHT_SCENE.roughness, L);
+      mat.envMapIntensity = lerp(scene.tuning.envIntensity, LIGHT_SCENE.envIntensity, L);
+      const col = i === 0 ? theme.logoE : theme.logoD;
+      mat.color.setRGB(col.r, col.g, col.b, THREE.SRGBColorSpace);
     });
 
     const grp = group.current!;
@@ -113,13 +128,32 @@ export function GuideLogo() {
     if (scene.portal > 0.001) guideColor.lerp(roomTint(scene.room, roomColor), scene.portal);
     uniforms.uTint.value.lerp(guideColor, 1 - Math.exp(-4 * dt));
     uniforms.uDissolve.value = c.dissolve;
-    uniforms.uGlow.value = c.glow;
+    uniforms.uGlow.value = c.glow * lerp(1, LIGHT_SCENE.glow, L);
     uniforms.uTime.value += dt;
+
+    // Where the logo is this frame — the light theme's contact shadow follows it
+    const out = scene.logo;
+    out.x = c.x;
+    out.y = c.y;
+    out.z = c.z;
+    out.scale = c.s;
+    out.dissolve = c.dissolve;
 
     lineUniforms.uDraw.value = scene.intro.lines;
     lineUniforms.uConverge.value = Math.min(1, scene.intro.lines * 1.35);
     lineUniforms.uOpacity.value = Math.min(1, scene.intro.lines * 2) * (1 - scene.intro.dissolve * 0.92);
     lineUniforms.uColor.value.copy(uniforms.uTint.value);
+    lineUniforms.uHead.value.copy(WHITE);
+    if (L > 0) {
+      // Light: dark contour lines with a gold draw-head, normal blending (additive can't darken white)
+      lineUniforms.uOpacity.value *= blendSwitchVisibility(L);
+      lineUniforms.uColor.value.lerp(
+        themeColor.setRGB(theme.strong.r, theme.strong.g, theme.strong.b, THREE.SRGBColorSpace),
+        L,
+      );
+      lineUniforms.uHead.value.lerp(HEAD_LIGHT, L);
+    }
+    lineMaterial.blending = L < 0.5 ? THREE.AdditiveBlending : THREE.NormalBlending;
     if (lines.current) lines.current.visible = lineUniforms.uOpacity.value > 0.01;
   });
 
@@ -137,7 +171,7 @@ export function GuideLogo() {
   } as const;
 
   return (
-    <group ref={group}>
+    <group ref={group} name={GUIDE_LOGO_NAME}>
       <group ref={tilt}>
         {/* Negative Y flips SVG space; three.js corrects face winding for negative-determinant matrices */}
         <group scale={[1, -1, 1]}>

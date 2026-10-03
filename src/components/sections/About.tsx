@@ -128,7 +128,7 @@ export function About() {
             title={about.title}
             titleClassName="!text-[clamp(2rem,3.3vw,3.4rem)]"
           />
-          <div className="about-body mt-6 space-y-3 text-[0.98rem] leading-relaxed text-fg/85 md:text-base">
+          <div className="about-body mt-6 space-y-3 text-[0.98rem] leading-relaxed text-body md:text-base">
             {about.body.map((p) => (
               <p key={p.slice(0, 16)}>{p}</p>
             ))}

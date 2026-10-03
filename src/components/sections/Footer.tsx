@@ -20,7 +20,7 @@ export function Footer() {
       const mm = gsap.matchMedia();
       mm.add(`${MEDIA.desktop}, ${MEDIA.mobile}`, () => {
         const split = SplitText.create(wordmark.current, { type: "chars", mask: "chars" });
-        applyGradientToChars(split.chars, wordmark.current!);
+        applyGradientToChars(split.chars, wordmark.current!, "var(--gradient-wordmark)");
         gsap.from(split.chars, {
           yPercent: 110,
           stagger: STAGGER.chars * 2,
@@ -47,7 +47,7 @@ export function Footer() {
     <footer ref={root} className="relative overflow-hidden border-t border-line pt-20 pb-8">
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-40 left-1/2 h-80 w-[70vw] -translate-x-1/2 rounded-full opacity-20 blur-3xl bg-accent-diag"
+        className="pointer-events-none absolute -bottom-40 left-1/2 h-80 w-[70vw] -translate-x-1/2 rounded-full opacity-10 blur-3xl bg-accent-diag dark:opacity-20"
       />
       <div className="relative container-site">
         <div className="grid-12 gap-y-10">
@@ -62,7 +62,10 @@ export function Footer() {
             <ul className="space-y-2">
               {footer.quickLinks.map((l) => (
                 <li key={l.href}>
-                  <TransitionLink href={l.href} className="text-fg/80 transition-colors hover:text-brand-yellow">
+                  <TransitionLink
+                    href={l.href}
+                    className="text-body transition-colors hover:text-fg dark:text-fg/80 dark:hover:text-brand-yellow"
+                  >
                     {l.label}
                   </TransitionLink>
                 </li>
@@ -79,7 +82,7 @@ export function Footer() {
                     href={s.href}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="text-fg/80 transition-colors hover:text-brand-yellow"
+                    className="text-body transition-colors hover:text-fg dark:text-fg/80 dark:hover:text-brand-yellow"
                     data-cursor="Visit"
                   >
                     {s.label}

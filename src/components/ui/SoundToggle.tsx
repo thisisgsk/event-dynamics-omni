@@ -18,12 +18,12 @@ export function SoundToggle() {
       aria-pressed={enabled}
       aria-label={enabled ? ui.sound.on : ui.sound.off}
       data-cursor={enabled ? "Mute" : "Sound"}
-      className="flex h-11 w-11 items-center justify-center gap-[3px] rounded-full border border-line bg-white/[0.03] backdrop-blur-md transition-colors duration-(--duration-micro) hover:border-white/30"
+      className="flex h-11 w-11 items-center justify-center gap-[3px] rounded-full border border-line bg-ink/[0.03] backdrop-blur-md transition-colors duration-(--duration-micro) hover:border-ink/30"
     >
       {BARS.map((h, i) => (
         <motion.span
           key={i}
-          className="block w-[2px] origin-bottom rounded-full bg-accent"
+          className="block w-[2px] origin-bottom rounded-full bg-accent-line"
           style={{ height: 14 }}
           animate={enabled ? { scaleY: [h, 0.25, 1, h] } : { scaleY: 0.18 }}
           transition={

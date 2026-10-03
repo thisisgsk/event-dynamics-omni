@@ -12,11 +12,12 @@ import { BrandLockup } from "./BrandLogo";
 import { MagneticButton } from "./MagneticButton";
 import { MobileMenu } from "./MobileMenu";
 import { SoundToggle } from "./SoundToggle";
+import { ThemeToggle } from "./ThemeToggle";
 import { TransitionLink } from "./TransitionLink";
 
 const SECTION_IDS = nav.links.map((l) => l.href.replace("#", ""));
 
-/** The single site navbar: transparent at top, glass after 80px, hides on scroll down, returns on scroll up. */
+/** The single site navbar: transparent at top, glass after 80px (dark glass / white glass per theme), hides on scroll down, returns on scroll up. */
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -49,9 +50,7 @@ export function Navbar() {
           aria-label="Primary"
           className={cn(
             "container-site mt-3 flex h-16 items-center justify-between rounded-full transition-[background-color,box-shadow,backdrop-filter] duration-(--duration-ui) ease-out md:mt-4 md:h-[4.5rem]",
-            scrolled && !menuOpen
-              ? "bg-bg/55 shadow-[inset_0_0_0_1px_rgb(235_185_46/0.14)] backdrop-blur-xl"
-              : "bg-transparent",
+            scrolled && !menuOpen ? "bg-(--nav-glass) shadow-(--nav-edge) backdrop-blur-xl" : "bg-transparent",
           )}
           style={{ maxWidth: "min(1440px, calc(100% - 1.5rem))" }}
         >
@@ -74,15 +73,15 @@ export function Navbar() {
                     aria-current={isActive ? "location" : undefined}
                     className={cn(
                       "group relative rounded-full px-4 py-2 text-sm transition-colors duration-(--duration-micro)",
-                      isActive ? "text-brand-yellow" : "text-fg/75 hover:text-brand-white",
+                      isActive ? "text-accent-ink" : "text-fg/75 hover:text-fg dark:hover:text-brand-white",
                     )}
                   >
                     {link.label}
                     <span
                       aria-hidden
                       className={cn(
-                        "absolute inset-x-4 bottom-1 h-px origin-left bg-brand-yellow transition-transform duration-(--duration-ui) ease-out group-hover:scale-x-100",
-                        isActive ? "scale-x-100 shadow-[0_0_8px_var(--color-brand-yellow)]" : "scale-x-0",
+                        "absolute inset-x-4 bottom-1 h-px origin-left bg-accent-ink transition-transform duration-(--duration-ui) ease-out group-hover:scale-x-100",
+                        isActive ? "scale-x-100 dark:shadow-[0_0_8px_var(--color-brand-yellow)]" : "scale-x-0",
                       )}
                     />
                   </TransitionLink>
@@ -93,7 +92,11 @@ export function Navbar() {
 
           <div className="flex items-center gap-2 md:gap-3">
             <SoundToggle />
-            {/* Wrapper controls visibility: the button's own inline-flex would override `hidden` */}
+            {/* Wrappers control visibility: the buttons' own (inline-)flex would override `hidden`.
+                Below md the theme toggle lives in the mobile menu. */}
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
             <div className="hidden md:block">
               <MagneticButton href={nav.cta.href} size="sm" variant="primary" cursorLabel="Plan">
                 {nav.cta.label}

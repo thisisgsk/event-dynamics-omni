@@ -98,6 +98,7 @@ uniform vec3 uTint;
 uniform vec2 uMouse;
 uniform float uTime;
 uniform vec2 uRes;
+uniform float uLight;
 varying vec2 vUv;
 
 ${noiseGLSL}
@@ -109,7 +110,8 @@ void main() {
   vec2 c = vec2(uMouse.x * 0.15, 0.05 + uMouse.y * 0.1);
   float glow = exp(-length(p - c) * 2.4);
   float haze = ed_fbm(vec3(p * 1.6, uTime * 0.03));
-  col += uTint * glow * 0.075 * (0.6 + haze * 0.8);
+  // Tinted glow on dark; the light page stays clean white
+  col += uTint * glow * 0.075 * (0.6 + haze * 0.8) * (1.0 - uLight);
   gl_FragColor = vec4(col, 1.0);
   #include <colorspace_fragment>
 }

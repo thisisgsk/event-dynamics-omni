@@ -77,7 +77,7 @@ export function TransitionProvider({ children }: { children: ReactNode }) {
               }
             }}
           >
-            <span className="font-display text-2xl font-bold tracking-[0.3em] text-bg/80">{brand.wordmark}</span>
+            <span className="font-display text-2xl font-bold tracking-[0.3em] text-on-accent/80">{brand.wordmark}</span>
           </motion.div>
         )}
       </AnimatePresence>

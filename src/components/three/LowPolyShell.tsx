@@ -5,8 +5,12 @@ import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { PALETTE } from "@/lib/animation/tokens";
 import { scene } from "@/lib/animation/sceneState";
+import { blendSwitchVisibility, LIGHT_SCENE } from "@/lib/theme/scene";
 
-/** Faint low-poly geometry: a wireframe icosa shell and a faceted terrain drifting below. */
+/**
+ * Faint low-poly geometry: a wireframe icosa shell and a faceted terrain drifting below.
+ * Dark: additive lines in the guide tint. Light: faint grey lines (--graphic-line) with normal blending.
+ */
 export function LowPolyShell() {
   const shell = useRef<THREE.LineSegments>(null);
   const terrain = useRef<THREE.LineSegments>(null);
@@ -32,11 +36,18 @@ export function LowPolyShell() {
   }, []);
 
   const target = useMemo(() => new THREE.Color(), []);
+  const themed = useMemo(() => new THREE.Color(), []);
 
   useFrame((_, delta) => {
     const g = scene.guide;
-    material.color.lerp(target.setRGB(g.r, g.g, g.b), 1 - Math.exp(-2 * delta));
-    material.opacity = 0.07 * (0.3 + 0.7 * g.particles) * (1 - scene.portal * 0.8);
+    const t = scene.theme;
+    target.setRGB(g.r, g.g, g.b);
+    if (t.light > 0) target.lerp(themed.setRGB(t.line.r, t.line.g, t.line.b, THREE.SRGBColorSpace), t.light);
+    material.color.lerp(target, 1 - Math.exp(-2 * delta));
+    material.blending = t.light < 0.5 ? THREE.AdditiveBlending : THREE.NormalBlending;
+    const base = THREE.MathUtils.lerp(0.07, LIGHT_SCENE.lineOpacity, t.light);
+    material.opacity =
+      base * (0.3 + 0.7 * g.particles) * (1 - scene.portal * 0.8) * (t.light > 0 ? blendSwitchVisibility(t.light) : 1);
     shell.current!.rotation.y += delta * 0.02;
     shell.current!.rotation.x = g.ry * 0.02;
     terrain.current!.position.z = -6 + Math.sin(g.ry * 0.05) * 1.5;
